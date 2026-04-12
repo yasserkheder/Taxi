@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="sv" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2563eb">
+    <title>Kheder App</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        *, ::before, ::after { box-sizing: border-box; }
+        html { line-height: 1.5; -webkit-text-size-adjust: 100%; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 24%),
+                radial-gradient(circle at top right, rgba(14, 165, 233, 0.14), transparent 24%),
+                linear-gradient(180deg, #f7fbff 0%, #f3f6fb 42%, #eef2f8 100%);
+            color: #0f172a;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+        [x-cloak] { display: none !important; }
+        .max-w-app { max-width: 1180px; margin: 0 auto; }
+        .ios-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 251, 255, 0.88));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 18px 38px -28px rgba(15, 23, 42, 0.42), 0 10px 16px -12px rgba(59, 130, 246, 0.18);
+        }
+        .header-shell {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            background: rgba(247, 251, 255, 0.85);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.85rem 1rem;
+            border-radius: 22px;
+        }
+        .brand-mark {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2563eb, #0ea5e9);
+            color: #fff;
+            box-shadow: 0 22px 36px -24px rgba(37, 99, 235, 0.8);
+        }
+        .company-name { font-size: 0.78rem; color: #64748b; font-weight: 700; margin-top: 0.25rem; }
+        .subtle-text { color: #64748b; }
+        .top-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .control-input, .control-select {
+            width: 100%;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.84);
+            color: #0f172a;
+            padding: 0.92rem 1rem;
+            font-size: 0.98rem;
+            font-weight: 700;
+            outline: none;
+        }
+        .control-input:focus, .control-select:focus {
+            border-color: rgba(37, 99, 235, 0.4);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+        }
+        .input-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        .input-group .label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 800;
+            color: #94a3b8;
+            padding-inline-start: 0.35rem;
+        }
+        .control-input::placeholder {
+            color: #b6c2d1;
+            font-weight: 700;
+        }
+        .password-field {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-field .control-input {
+            padding-inline-end: 3.25rem;
+        }
+        .password-toggle {
+            position: absolute;
+            inset-inline-end: 0.55rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2.3rem;
+            height: 2.3rem;
+            border: none;
+            border-radius: 999px;
+            background: rgba(226, 232, 240, 0.9);
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .password-toggle:active {
+            transform: translateY(-50%) scale(0.96);
+        }
+        .ios-btn-blue, .ios-btn-soft, .danger-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: none;
+            border-radius: 18px;
+            padding: 0.95rem 1.15rem;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+        }
+        .ios-btn-blue {
+            color: #fff;
+            background: linear-gradient(135deg, #2563eb, #0ea5e9);
+            box-shadow: 0 20px 30px -18px rgba(37, 99, 235, 0.7);
+        }
+        .ios-btn-soft {
+            color: #2563eb;
+            background: rgba(219, 234, 254, 0.85);
+            border: 1px solid rgba(147, 197, 253, 0.6);
+        }
+        .danger-btn {
+            color: #e11d48;
+            background: rgba(255, 241, 242, 0.8);
+            border: 1px solid rgba(251, 113, 133, 0.4);
+        }
+        .ios-btn-blue:active, .ios-btn-soft:active, .danger-btn:active { transform: scale(0.98); opacity: 0.92; }
+        .tab-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.55rem;
+            padding: 0.45rem;
+        }
+        .tab-btn {
+            border: none;
+            background: transparent;
+            border-radius: 16px;
+            padding: 0.9rem 0.85rem;
+            color: #64748b;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(14, 165, 233, 0.12));
+            color: #2563eb;
+            box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.12);
+        }
+        .tab-btn:active { transform: scale(0.985); }
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 1rem;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.9rem;
+        }
+        .metric-card {
+            min-height: 145px;
+            padding: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .metric-card .eyebrow {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 800;
+            color: #94a3b8;
+        }
+        .metric-card .value {
+            font-size: 1.65rem;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+        .metric-card .meta {
+            margin-top: 0.35rem;
+            font-size: 0.78rem;
+            color: #64748b;
+            font-weight: 700;
+        }
+        .metric-danger {
+            background: linear-gradient(180deg, rgba(255, 241, 242, 0.94), rgba(255, 251, 252, 0.9));
+            border-color: rgba(251, 113, 133, 0.28);
+        }
+        .status-danger {
+            color: #e11d48;
+            background: rgba(255, 241, 242, 0.8);
+            border: 1px solid rgba(251, 113, 133, 0.35);
+        }
+        .status-ok {
+            color: #059669;
+            background: rgba(236, 253, 245, 0.85);
+            border: 1px solid rgba(52, 211, 153, 0.28);
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.45rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            font-weight: 800;
+        }
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+        .list-shell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .record-card, .day-summary-card, .user-card {
+            padding: 1rem;
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(255, 255, 255, 0.84);
+        }
+        .record-card.danger, .day-summary-card.danger { background: rgba(255, 241, 242, 0.78); border-color: rgba(251, 113, 133, 0.28); }
+        .record-head, .summary-row, .user-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.8rem;
+            align-items: flex-start;
+        }
+        .record-main, .user-main {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .record-number, .user-name {
+            font-size: 1rem;
+            font-weight: 900;
+            color: #0f172a;
+        }
+        .record-meta, .user-meta {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 700;
+        }
+        .record-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.7rem;
+            margin-top: 0.9rem;
+        }
+        .record-stat {
+            padding: 0.75rem 0.8rem;
+            border-radius: 16px;
+            background: rgba(241, 245, 249, 0.82);
+        }
+        .record-stat .k {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 800;
+            color: #94a3b8;
+        }
+        .record-stat .v {
+            margin-top: 0.3rem;
+            font-size: 1rem;
+            font-weight: 900;
+            color: #0f172a;
+        }
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.95rem;
+        }
+        .empty-state {
+            padding: 2rem 1.2rem;
+            text-align: center;
+            color: #64748b;
+            font-weight: 700;
+        }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 50;
+        }
+        .modal-card {
+            width: 100%;
+            max-width: 720px;
+            border-radius: 28px;
+            padding: 1.15rem;
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.85rem;
+        }
+        .hero-card {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .hero-card h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 900;
+        }
+        .inline-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+        .helper-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.8rem;
+        }
+        .login-shell {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem;
+        }
+        .login-card {
+            width: min(100%, 460px);
+            padding: 1.3rem;
+            border-radius: 28px;
+        }
+        .table-like {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .mini-note {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 700;
+        }
+        .role-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+        .role-admin {
+            color: #2563eb;
+            background: rgba(219, 234, 254, 0.85);
+            border: 1px solid rgba(147, 197, 253, 0.55);
+        }
+        .role-supervisor {
+            color: #7c3aed;
+            background: rgba(243, 232, 255, 0.88);
+            border: 1px solid rgba(196, 181, 253, 0.55);
+        }
+        .role-driver {
+            color: #059669;
+            background: rgba(236, 253, 245, 0.88);
+            border: 1px solid rgba(110, 231, 183, 0.45);
+        }
+        .header-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.78rem 1rem;
+            border-radius: 22px;
+            color: #fff;
+            min-width: 220px;
+            box-shadow: 0 14px 28px -22px rgba(15, 23, 42, 0.45);
+        }
+        .header-status-dot {
+            width: 0.72rem;
+            height: 0.72rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 0.18rem rgba(255, 255, 255, 0.14);
+        }
+        .header-status-pill .timer {
+            font-size: 1.12rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: 0.01em;
+            font-family: inherit;
+        }
+        .header-status-pill.pending {
+            background: linear-gradient(135deg, #4a7db5, #7c5bb5);
+        }
+        .header-status-pill.work {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+        }
+        .header-status-pill.rest {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+        .header-status-pill.warning {
+            background: linear-gradient(135deg, #ff9800, #ef6c00);
+        }
+        .header-status-pill.danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+        .status-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.9rem;
+        }
+        .status-tile {
+            padding: 1rem;
+            border-radius: 20px;
+            color: #fff;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 18px 34px -24px rgba(15, 23, 42, 0.45);
+        }
+        .status-tile.pending {
+            background: linear-gradient(135deg, #4a7db5, #7c5bb5);
+        }
+        .status-tile.work {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+        }
+        .status-tile.rest {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+        .status-tile.warning {
+            background: linear-gradient(135deg, #ff9800, #ef6c00);
+        }
+        .status-tile.danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+        .status-value {
+            font-size: 1.7rem;
+            font-weight: 900;
+            line-height: 1.05;
+        }
+        .status-copy {
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.88);
+            font-weight: 700;
+        }
+        .section-shell {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .embed-frame {
+            width: 100%;
+            min-height: 880px;
+            border: none;
+            border-radius: 28px;
+            background: transparent;
+            display: block;
+        }
+        .embed-shell {
+            padding: 0.45rem;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            box-shadow: 0 22px 38px -30px rgba(15, 23, 42, 0.38);
+        }
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.8rem;
+        }
+        .access-card {
+            padding: 1rem;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.84);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+        }
+        .scope-banner {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(219, 234, 254, 0.72);
+            color: #1d4ed8;
+            border: 1px solid rgba(147, 197, 253, 0.42);
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+        .danger-text { color: #e11d48; }
+        .success-text { color: #059669; }
+        @media (max-width: 900px) {
+            .layout-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 720px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .record-stats { grid-template-columns: 1fr 1fr; }
+            .top-actions { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body x-data="khederApp()" x-init="init()">
+    <div x-cloak x-show="!ready" class="login-shell">
+        <div class="ios-card login-card">
+            <div class="brand-pill ios-card" style="padding: 0.95rem;">
+                <div class="brand-mark">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M3 17h18"/><path d="M5 17l2-7h10l2 7"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><path d="M7 10V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3"/></svg>
+                </div>
+                <div>
+                    <div style="font-size:1.4rem;font-weight:900;line-height:1.1;">Kheder App</div>
+                    <div class="company-name">Laddar systemet...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div x-cloak x-show="ready && !sessionUser" class="login-shell">
+        <div class="ios-card login-card">
+            <div class="brand-pill ios-card" style="padding: 0.95rem;">
+                <div class="brand-mark">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M3 17h18"/><path d="M5 17l2-7h10l2 7"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><path d="M7 10V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3"/></svg>
+                </div>
+                <div>
+                    <div style="font-size:1.5rem;font-weight:900;line-height:1.1;">Kheder App</div>
+                    <div class="company-name">Gemensamt system för alla förare</div>
+                </div>
+            </div>
+
+            <div style="margin-top:1rem;display:flex;flex-direction:column;gap:0.9rem;">
+                <div class="input-group">
+                    <span class="label">Användarnamn</span>
+                    <input class="control-input" x-model.trim="loginForm.username" autocomplete="username" placeholder="Förarenamn">
+                </div>
+                <div class="input-group">
+                    <span class="label">Lösenord</span>
+                    <div class="password-field">
+                        <input class="control-input" x-model="loginForm.password" :type="showLoginPassword ? 'text' : 'password'" autocomplete="current-password" @keydown.enter.prevent="login()" placeholder="Lösenord">
+                        <button class="password-toggle" type="button" @click="showLoginPassword = !showLoginPassword" :aria-label="showLoginPassword ? 'Dölj lösenord' : 'Visa lösenord'">
+                            <svg x-show="!showLoginPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+                                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg x-show="showLoginPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+                                <path d="m3 3 18 18"></path>
+                                <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83"></path>
+                                <path d="M9.36 5.37A9.92 9.92 0 0 1 12 5c7 0 11 7 11 7a21.8 21.8 0 0 1-2.46 3.36"></path>
+                                <path d="M6.23 6.23A21.1 21.1 0 0 0 1 12s4 7 11 7a10.7 10.7 0 0 0 5-.93"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div x-show="authError" class="badge status-danger" x-text="authError"></div>
+                <button class="ios-btn-blue" @click="login()" :disabled="loading" style="width:100%;">
+                    <span x-text="loading ? 'Loggar in...' : 'Logga in'"></span>
+                </button>
+                <div class="mini-note">Adminuppgifter hanteras av systemägaren.</div>
+            </div>
+        </div>
+    </div>
+
+    <div x-cloak x-show="ready && sessionUser">
+        <header class="header-shell">
+            <div class="max-w-app" style="padding:1rem;">
+                <div class="layout-grid" style="align-items:center;">
+                    <div class="brand-pill ios-card">
+                        <div class="brand-mark">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M3 17h18"/><path d="M5 17l2-7h10l2 7"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><path d="M7 10V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3"/></svg>
+                        </div>
+                        <div>
+                            <div style="font-size:1.55rem;font-weight:900;line-height:1.1;">Kheder App</div>
+                            <div class="company-name">
+                                <span x-text="sessionUser?.displayName || ''"></span>
+                            </div>
+                            <div style="margin-top:0.45rem;">
+                                <span class="role-chip" :class="roleClass(sessionUser)" x-text="roleLabel(sessionUser)"></span>
+                            </div>
+                        </div>
+                        <div x-show="sessionUser && currentUserStatus" class="header-status-pill" :class="statusClassFromStatus(currentUserStatus)" style="margin-inline-start:auto;">
+                            <span class="header-status-dot"></span>
+                            <div class="timer" x-text="headerTimerText(currentUserStatus)"></div>
+                        </div>
+                    </div>
+
+                    <div class="ios-card" style="padding:0.9rem;">
+                        <div class="top-actions">
+                            <div class="input-group" style="flex:1;min-width:180px;">
+                                <span class="label">Datum</span>
+                                <input class="control-input" type="date" x-model="selectedDate" @change="refreshDashboard()">
+                            </div>
+                            <div class="input-group" style="flex:1;min-width:200px;" x-show="canSelectDriverScope && view !== 'arbete' && view !== 'status'">
+                                <span class="label">Visar förare</span>
+                                <select class="control-select" x-model="selectedDriverId" @change="refreshDashboard()">
+                                    <option value="all" x-show="isAdmin">Alla förare</option>
+                                    <template x-for="user in drivers" :key="user.id">
+                                        <option :value="String(user.id)" x-text="user.displayName"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <button class="ios-btn-soft" @click="refreshDashboard()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+                                Uppdatera
+                            </button>
+                            <button class="danger-btn" @click="logout()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                Logga ut
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ios-card" style="margin-top:0.9rem;">
+                    <div class="tab-bar">
+                        <button class="tab-btn" :class="{ active: view === 'overview' }" @click="view = 'overview'">Översikt</button>
+                        <button class="tab-btn" :class="{ active: view === 'korning' }" @click="view = 'korning'">Körning</button>
+                        <button class="tab-btn" :class="{ active: view === 'arbete' }" @click="view = 'arbete'">Arbete</button>
+                        <button class="tab-btn" :class="{ active: view === 'ersattning' }" @click="view = 'ersattning'">Ersättning</button>
+                        <button class="tab-btn" :class="{ active: view === 'status' }" @click="view = 'status'" x-show="canSeeStatusPage">Förarstatus</button>
+                        <button class="tab-btn" :class="{ active: view === 'users' }" @click="view = 'users'" x-show="isAdmin">Förare</button>
+                        <button class="tab-btn" :class="{ active: view === 'help' }" @click="view = 'help'">Hjälp</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-app" style="padding:1rem 1rem 2rem;">
+            <div x-show="flash" class="badge status-ok" style="margin-bottom:1rem;" x-text="flash"></div>
+            <div x-show="error" class="badge status-danger" style="margin-bottom:1rem;" x-text="error"></div>
+
+            <section x-show="view === 'overview'" class="section-shell">
+                <div class="access-grid">
+                    <div class="access-card">
+                        <div class="mini-note">Inloggad som</div>
+                        <div class="record-number" x-text="sessionUser?.displayName || ''"></div>
+                        <div style="margin-top:0.55rem;">
+                            <span class="role-chip" :class="roleClass(sessionUser)" x-text="roleLabel(sessionUser)"></span>
+                        </div>
+                    </div>
+                    <div class="access-card">
+                        <div class="mini-note">Vad du ser</div>
+                        <div class="record-meta" x-text="accessSummary()"></div>
+                    </div>
+                    <div class="access-card">
+                        <div class="mini-note">Statussida</div>
+                        <div class="record-meta" x-text="canSeeStatusPage ? 'Du ser sidan Förarstatus.' : 'Förarstatus visas inte för vanlig förare.'"></div>
+                    </div>
+                    <div class="access-card" x-show="canSelectDriverScope">
+                        <div class="mini-note">Visar data för</div>
+                        <div class="record-meta" x-text="viewedDriverLabel()"></div>
+                    </div>
+                </div>
+
+                <div x-show="canSelectDriverScope" class="scope-banner">
+                    <span>Visar förare</span>
+                    <span x-text="viewedDriverLabel()"></span>
+                </div>
+
+                <div class="ios-card" style="margin-top:1rem;" x-show="documentAlerts.length && canSeeStatusPage">
+                    <div class="summary-row" style="margin-bottom:0.9rem;">
+                        <div>
+                            <h2 class="section-title">Dokumentpåminnelser</h2>
+                            <div class="mini-note">Dokument som snart går ut eller redan har gått ut visas här för uppföljning.</div>
+                        </div>
+                        <button class="ios-btn-soft" x-show="isAdmin && emailAlertsConfigured" @click="sendDocumentAlerts()">Skicka e-post</button>
+                    </div>
+                    <div class="helper-grid">
+                        <template x-for="alert in documentAlerts" :key="'overview-alert-' + alert.userId + '-' + alert.documentLabel">
+                            <div class="record-stat">
+                                <div class="k" x-text="alert.displayName + ' · ' + alert.documentLabel"></div>
+                                <div class="v" :class="alert.level === 'danger' ? 'danger-text' : ''" x-text="alert.message"></div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="ios-card metric-card" :class="dashboard?.day?.missingPrice ? 'metric-danger' : ''">
+                        <div class="eyebrow">Dagens total</div>
+                        <div>
+                            <div class="value" x-text="formatCurrency(dashboard?.day?.total ?? 0)"></div>
+                            <div class="meta">
+                                <span x-text="(dashboard?.day?.recordCount ?? 0) + ' körningar'"></span>
+                                <span>·</span>
+                                <span x-text="formatDuration(dashboard?.day?.durationMinutes ?? 0)"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="badge" :class="dashboard?.day?.missingPrice ? 'status-danger' : 'status-ok'">
+                                <span x-text="dashboard?.day?.missingPrice ? 'Pris saknas idag' : 'Alla dagens priser finns'"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="ios-card metric-card">
+                        <div class="eyebrow">Veckans total</div>
+                        <div>
+                            <div class="value" x-text="formatCurrency(dashboard?.week?.total ?? 0)"></div>
+                            <div class="meta">
+                                <span x-text="(dashboard?.week?.recordCount ?? 0) + ' körningar'"></span>
+                                <span>·</span>
+                                <span x-text="formatDuration(dashboard?.week?.durationMinutes ?? 0)"></span>
+                            </div>
+                        </div>
+                        <div class="mini-note" x-text="(dashboard?.week?.startDate || '') + ' → ' + (dashboard?.week?.endDate || '')"></div>
+                    </div>
+
+                    <div class="ios-card metric-card">
+                        <div class="eyebrow">Månadens total</div>
+                        <div>
+                            <div class="value" x-text="formatCurrency(dashboard?.month?.total ?? 0)"></div>
+                            <div class="meta">
+                                <span x-text="(dashboard?.month?.recordCount ?? 0) + ' körningar'"></span>
+                                <span>·</span>
+                                <span x-text="formatDuration(dashboard?.month?.durationMinutes ?? 0)"></span>
+                            </div>
+                        </div>
+                        <div class="mini-note" x-text="(dashboard?.month?.startDate || '') + ' → ' + (dashboard?.month?.endDate || '')"></div>
+                    </div>
+                </div>
+
+                <div class="layout-grid">
+                    <div class="ios-card hero-card">
+                        <div class="summary-row">
+                            <div>
+                                <h2 class="section-title">Dagens körningar</h2>
+                                <div class="mini-note">Valt datum: <span x-text="formatDate(dashboard?.selectedDate || selectedDate)"></span></div>
+                                <div class="mini-note" x-show="canSelectDriverScope" x-text="'Visar: ' + viewedDriverLabel()"></div>
+                            </div>
+                            <button class="ios-btn-blue" @click="openRecordModal()" x-show="canManageVisibleRecords">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Ny körning
+                            </button>
+                        </div>
+
+                        <div x-show="dashboard?.day?.records?.length" class="list-shell">
+                            <template x-for="record in dashboard?.day?.records || []" :key="record.id">
+                                <div class="record-card" :class="record.price === null ? 'danger' : ''">
+                                    <div class="record-head">
+                                        <div class="record-main">
+                                            <div class="record-number" x-text="'Körning #' + record.korningNumber"></div>
+                                            <div class="record-meta">
+                                                <span x-text="record.driverName"></span>
+                                                <span>·</span>
+                                                <span x-text="formatDate(record.date)"></span>
+                                            </div>
+                                        </div>
+                                        <span class="badge" :class="record.price === null ? 'status-danger' : 'status-ok'">
+                                            <span x-text="record.price === null ? 'Pris saknas' : 'Pris sparat'"></span>
+                                        </span>
+                                    </div>
+
+                                    <div class="record-stats">
+                                        <div class="record-stat">
+                                            <div class="k">Tid</div>
+                                            <div class="v" x-text="record.startTime + ' → ' + record.endTime"></div>
+                                        </div>
+                                        <div class="record-stat">
+                                            <div class="k">Varaktighet</div>
+                                            <div class="v" x-text="formatDuration(record.durationMinutes)"></div>
+                                        </div>
+                                        <div class="record-stat">
+                                            <div class="k">Pris</div>
+                                            <div class="v" :class="record.price === null ? 'danger-text' : ''" x-text="record.price === null ? 'Saknas' : formatCurrency(record.price)"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="action-row" x-show="canManageRecord(record)">
+                                        <button class="ios-btn-soft" @click="openRecordModal(record)">Redigera</button>
+                                        <button class="danger-btn" @click="removeRecord(record)">Radera</button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div x-show="!dashboard?.day?.records?.length" class="empty-state ios-card">
+                            Inga körningar finns för valt datum ännu.
+                        </div>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;gap:1rem;">
+                        <div class="ios-card hero-card">
+                            <h2 class="section-title">Veckodagar</h2>
+                            <div class="list-shell" x-show="dashboard?.week?.days?.length">
+                                <template x-for="day in dashboard?.week?.days || []" :key="day.date">
+                                    <div class="day-summary-card" :class="day.missingPrice ? 'danger' : ''">
+                                        <div class="summary-row">
+                                            <div>
+                                                <div class="record-number" x-text="formatDate(day.date)"></div>
+                                                <div class="record-meta">
+                                                    <span x-text="day.recordCount + ' körningar'"></span>
+                                                    <span>·</span>
+                                                    <span x-text="formatDuration(day.durationMinutes)"></span>
+                                                </div>
+                                            </div>
+                                            <div style="text-align:right;">
+                                                <div style="font-size:1rem;font-weight:900;" x-text="formatCurrency(day.total)"></div>
+                                                <div class="mini-note" :class="day.missingPrice ? 'danger-text' : ''" x-text="day.missingPrice ? 'Pris saknas' : 'Komplett dag'"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <div x-show="!dashboard?.week?.days?.length" class="empty-state">Ingen data denna vecka.</div>
+                        </div>
+
+                        <div class="ios-card hero-card">
+                            <h2 class="section-title">Månadsdagar</h2>
+                            <div class="list-shell" x-show="dashboard?.month?.days?.length">
+                                <template x-for="day in dashboard?.month?.days?.slice(0, 10) || []" :key="day.date">
+                                    <div class="day-summary-card" :class="day.missingPrice ? 'danger' : ''">
+                                        <div class="summary-row">
+                                            <div>
+                                                <div class="record-number" x-text="formatDate(day.date)"></div>
+                                                <div class="record-meta" x-text="day.recordCount + ' körningar'"></div>
+                                            </div>
+                                            <div style="text-align:right;">
+                                                <div style="font-size:1rem;font-weight:900;" x-text="formatCurrency(day.total)"></div>
+                                                <div class="mini-note" :class="day.missingPrice ? 'danger-text' : ''" x-text="day.missingPrice ? 'Pris saknas' : 'OK'"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <div x-show="!dashboard?.month?.days?.length" class="empty-state">Ingen data denna månad.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section x-show="view === 'korning'" class="section-shell">
+                <div class="ios-card hero-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Körning</h2>
+                            <div class="mini-note">Registrera körningar per datum med obligatoriskt körningsnummer och valfritt pris.</div>
+                            <div class="mini-note">Alla körningar sparas centralt i databasen och visas för vald förare och valt datum.</div>
+                            <div class="mini-note" x-show="canSelectDriverScope" x-text="'Visar: ' + viewedDriverLabel()"></div>
+                        </div>
+                        <button class="ios-btn-blue" @click="openRecordModal()" x-show="canManageVisibleRecords">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Ny körning
+                        </button>
+                    </div>
+
+                    <div class="helper-grid">
+                        <div class="record-stat">
+                            <div class="k">Valt datum</div>
+                            <div class="v" x-text="formatDate(selectedDate)"></div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Dagens total</div>
+                            <div class="v" x-text="formatCurrency(dashboard?.day?.total ?? 0)"></div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Veckans total</div>
+                            <div class="v" x-text="formatCurrency(dashboard?.week?.total ?? 0)"></div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Månadens total</div>
+                            <div class="v" x-text="formatCurrency(dashboard?.month?.total ?? 0)"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ios-card hero-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Lista för valt datum</h2>
+                            <div class="mini-note">Röda poster betyder att pris saknas och dagen markeras visuellt för uppföljning.</div>
+                        </div>
+                        <div class="inline-info">
+                            <span class="badge" :class="dashboard?.day?.missingPrice ? 'status-danger' : 'status-ok'">
+                                <span x-text="dashboard?.day?.missingPrice ? 'Behöver pris' : 'Komplett dag'"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div x-show="dashboard?.day?.records?.length" class="table-like">
+                        <template x-for="record in dashboard?.day?.records || []" :key="record.id">
+                            <div class="record-card" :class="record.price === null ? 'danger' : ''">
+                                <div class="record-head">
+                                    <div class="record-main">
+                                        <div class="record-number" x-text="'Körning #' + record.korningNumber"></div>
+                                        <div class="record-meta">
+                                            <span x-text="record.driverName"></span>
+                                            <span>·</span>
+                                            <span x-text="record.startTime + ' → ' + record.endTime"></span>
+                                        </div>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <div style="font-size:1.1rem;font-weight:900;" :class="record.price === null ? 'danger-text' : ''" x-text="record.price === null ? 'Saknas' : formatCurrency(record.price)"></div>
+                                        <div class="mini-note" x-text="formatDuration(record.durationMinutes)"></div>
+                                    </div>
+                                </div>
+                                <div class="action-row" x-show="canManageRecord(record)">
+                                    <button class="ios-btn-soft" @click="openRecordModal(record)">Redigera</button>
+                                    <button class="danger-btn" @click="removeRecord(record)">Radera</button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div x-show="!dashboard?.day?.records?.length" class="empty-state">Ingen körning registrerad ännu för detta datum.</div>
+                </div>
+            </section>
+
+            <section x-show="view === 'status' && canSeeStatusPage" class="section-shell">
+                <div class="ios-card hero-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Förarstatus</h2>
+                            <div class="mini-note">Särskild sida för monitorering utan att överbelasta övriga vyer. Här visas alla förare med samma Arbete-status, samma färger och samma 24h/48h-logik.</div>
+                        </div>
+                        <span class="role-chip role-supervisor" x-show="!isAdmin">Övervakning</span>
+                    </div>
+                    <div class="status-board" x-show="drivers.length">
+                        <template x-for="user in drivers" :key="'status-' + user.id">
+                            <div class="status-tile" :class="statusCardClass(user)">
+                                <div>
+                                    <div class="summary-row">
+                                        <div>
+                                            <div class="record-number" style="color:#fff;" x-text="user.displayName"></div>
+                                            <div class="status-copy">
+                                                <span x-text="user.username"></span>
+                                                <span>·</span>
+                                                <span x-text="roleLabel(user)"></span>
+                                            </div>
+                                        </div>
+                                        <span class="role-chip" :class="roleClass(user)" x-text="roleLabel(user)"></span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="mini-note" style="color:rgba(255,255,255,0.76);">Status hämtas från Arbete</div>
+                                    <div class="status-value" x-text="statusCounter(user)"></div>
+                                    <div class="status-copy" x-text="statusDescription(user)"></div>
+                                </div>
+                                <div class="action-row" x-show="isAdmin" style="margin-top:0.8rem;">
+                                    <button class="ios-btn-soft" @click="openSegmentsModal(user)">Visa perioder</button>
+                                    <button class="danger-btn" @click="resetArbetePeriods(user)">Rensa Arbete</button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div x-show="!drivers.length" class="empty-state">Inga förare finns ännu att visa.</div>
+                </div>
+            </section>
+
+            <section x-show="view === 'users' && isAdmin" class="section-shell">
+                <div class="ios-card hero-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Förare</h2>
+                            <div class="mini-note">Admin skapar och hanterar förarkonton här.</div>
+                        </div>
+                        <button class="ios-btn-blue" @click="openUserModal()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Ny förare
+                        </button>
+                    </div>
+
+                    <div class="helper-grid" style="margin-bottom:1rem;">
+                        <div class="record-stat">
+                            <div class="k">Backup och återställning</div>
+                            <div class="v">Skapa backup före ändringar och återställ systemdatabasen vid behov.</div>
+                            <div class="action-row" style="margin-top:0.8rem;">
+                                <button class="ios-btn-soft" @click="createBackup()">Skapa backup</button>
+                                <button class="ios-btn-soft" @click="exportSystemData()">Exportera JSON</button>
+                            </div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Dokumentvarningar</div>
+                            <div class="v">Följ förare vars legitimation eller körkort snart går ut.</div>
+                            <div class="action-row" style="margin-top:0.8rem;">
+                                <button class="ios-btn-soft" @click="loadDocumentAlerts()">Uppdatera varningar</button>
+                                <button class="ios-btn-soft" x-show="emailAlertsConfigured" @click="sendDocumentAlerts()">Skicka e-post</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list-shell" x-show="backups.length" style="margin-bottom:1rem;">
+                        <template x-for="backup in backups" :key="backup.name">
+                            <div class="user-card">
+                                <div class="user-head">
+                                    <div class="user-main">
+                                        <div class="user-name" x-text="backup.name"></div>
+                                        <div class="user-meta">
+                                            <span x-text="backup.modifiedAt"></span>
+                                            <span>·</span>
+                                            <span x-text="Math.round((backup.size || 0) / 1024) + ' KB'"></span>
+                                        </div>
+                                    </div>
+                                    <button class="danger-btn" @click="restoreBackup(backup)">Återställ</button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="list-shell" x-show="drivers.length">
+                        <template x-for="user in drivers" :key="user.id">
+                            <div class="user-card">
+                                <div class="user-head">
+                                    <div class="user-main">
+                                        <div class="user-name" x-text="user.displayName"></div>
+                                        <div class="user-meta">
+                                            <span x-text="user.username"></span>
+                                            <span>·</span>
+                                            <span x-text="user.active ? 'Aktiv' : 'Inaktiv'"></span>
+                                        </div>
+                                    </div>
+                                    <span class="role-chip" :class="roleClass(user)" x-text="roleLabel(user)"></span>
+                                </div>
+                                <div class="action-row" style="margin-top:0.7rem;">
+                                    <div class="record-stat" style="min-width:220px;">
+                                        <div class="k">Behörighet</div>
+                                        <div class="v" x-text="user.canMonitor ? 'Förare + Övervakare' : 'Endast förare'"></div>
+                                    </div>
+                                    <div class="record-stat" style="min-width:220px;">
+                                        <div class="k">Legitimation</div>
+                                        <div class="v" x-text="user.legitimationNumber || '—'"></div>
+                                    </div>
+                                    <div class="record-stat" style="min-width:220px;">
+                                        <div class="k">Legitimation giltig till</div>
+                                        <div class="v" x-text="formatDate(user.legitimationExpiry)"></div>
+                                    </div>
+                                    <div class="record-stat" style="min-width:220px;">
+                                        <div class="k">Telefon</div>
+                                        <div class="v" x-text="user.phone || '—'"></div>
+                                    </div>
+                                    <div class="record-stat" style="min-width:220px;">
+                                        <div class="k">E-post</div>
+                                        <div class="v" x-text="user.email || '—'"></div>
+                                    </div>
+                                    <div class="record-stat" style="min-width:220px;">
+                                        <div class="k">Körkort giltig till</div>
+                                        <div class="v" x-text="formatDate(user.licenseExpiry)"></div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button class="ios-btn-soft" @click="openUserModal(user)">Redigera</button>
+                                    <button class="ios-btn-soft" @click="openSegmentsModal(user)">Visa perioder</button>
+                                    <button class="danger-btn" @click="resetArbetePeriods(user)">Rensa Arbete</button>
+                                    <button class="danger-btn" @click="removeUser(user)">Radera</button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div x-show="!drivers.length" class="empty-state">Inga förare finns ännu.</div>
+                </div>
+            </section>
+
+            <section x-show="view === 'arbete'" class="section-shell">
+                <div class="embed-shell">
+                    <template x-if="view === 'arbete' && sessionUser">
+                        <iframe class="embed-frame" :src="arbeteUrl()" title="Arbete"></iframe>
+                    </template>
+                </div>
+            </section>
+
+            <section x-show="view === 'ersattning'" class="section-shell">
+                <div class="ios-card hero-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Ersättning</h2>
+                            <div class="mini-note">Ersättning är integrerad i systemet och följer vald förare för administratör och övervakare.</div>
+                            <div class="mini-note" x-show="canSelectDriverScope" x-text="'Visar: ' + viewedDriverLabel()"></div>
+                        </div>
+                        <span class="role-chip role-driver" x-text="roleLabel(sessionUser)"></span>
+                    </div>
+                    <div class="scope-banner" x-show="canSelectDriverScope">
+                        <span>Visar förare</span>
+                        <span x-text="viewedDriverLabel()"></span>
+                    </div>
+                    <div class="helper-grid">
+                        <div class="record-stat">
+                            <div class="k">För förare</div>
+                            <div class="v">Egen vecka och egen ersättning</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">För admin</div>
+                            <div class="v">Granskning per förare och per vecka</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Hjälp</div>
+                            <div class="v">Samlas senare på ett ställe</div>
+                        </div>
+                    </div>
+                    <div class="badge status-ok" style="margin-top:0.9rem;" x-show="canSelectDriverScope">
+                        Ersättning är nu kopplad till vald förare och samma förare visas inne i sidan.
+                    </div>
+                </div>
+                <div class="ios-card hero-card">
+                    <h2 class="section-title">Ersättning</h2>
+                    <template x-if="view === 'ersattning' && sessionUser">
+                        <iframe class="embed-frame" :src="ersattningUrl()" title="Ersättning"></iframe>
+                    </template>
+                </div>
+            </section>
+
+            <section x-show="view === 'help'" class="section-shell">
+                <div class="ios-card hero-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Hjälp</h2>
+                            <div class="mini-note">Guide för användning, säkerhet, backup och hantering av vanliga driftproblem.</div>
+                        </div>
+                        <span class="role-chip role-admin">Hjälpcenter</span>
+                    </div>
+                    <div class="helper-grid">
+                        <div class="record-stat">
+                            <div class="k">Arbete</div>
+                            <div class="v">Förare växlar mellan Arbete och Vila i Arbete. Den övre statusrutan visar aktuell status och tid direkt i programmet.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Körning och Ersättning</div>
+                            <div class="v">Admin och övervakare väljer förare i toppen. Visad förare visas även inne i sidan för att undvika missförstånd.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Felaktiga perioder</div>
+                            <div class="v">Admin kan öppna Visa perioder och ta bort en enskild Arbete- eller Vila-period, eller rensa hela Arbete om en förare glömt att byta status.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Backup</div>
+                            <div class="v">Skapa backup dagligen och alltid före större ändringar. Exportera även JSON för extra arkivkopior.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Återställning</div>
+                            <div class="v">Återställ endast en verifierad backup. Ta alltid en ny säkerhetskopia innan återställning av systemet.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Om programmet stannar</div>
+                            <div class="v">Säkra databasen direkt, starta om servern, prova en testport och återställ backup om felet kvarstår. Registrera körningar manuellt under driftstopp.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Dokumentbevakning</div>
+                            <div class="v">Kontrollera dokumentvarningar regelbundet. Admin kan skicka e-postpåminnelser när SMTP är konfigurerat.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Datasäkerhet</div>
+                            <div class="v">Spara flera backup-kopior på olika platser, testa återställning regelbundet och undvik manuella ändringar i databasen utan verifierad rutin.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div x-show="recordModalOpen" x-cloak class="overlay" @click.self="closeRecordModal()">
+            <div class="ios-card modal-card">
+                <div class="summary-row" style="margin-bottom:1rem;">
+                    <div>
+                        <h2 class="section-title" x-text="recordForm.id ? 'Redigera körning' : 'Ny körning'"></h2>
+                        <div class="mini-note">Körningsnummer är obligatoriskt. Pris kan lämnas tomt och markeras då rött.</div>
+                    </div>
+                    <button class="danger-btn" @click="closeRecordModal()">Stäng</button>
+                </div>
+
+                <div class="form-grid">
+                    <div class="input-group" x-show="isAdmin">
+                        <span class="label">Förare</span>
+                        <select class="control-select" x-model="recordForm.userId">
+                            <template x-for="user in drivers" :key="user.id">
+                                <option :value="String(user.id)" x-text="user.displayName"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Körning nr</span>
+                        <input class="control-input" x-model.trim="recordForm.korningNumber">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Datum</span>
+                        <input class="control-input" type="date" x-model="recordForm.date">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Starttid</span>
+                        <input class="control-input" type="time" x-model="recordForm.startTime">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Sluttid</span>
+                        <input class="control-input" type="time" x-model="recordForm.endTime">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Pris</span>
+                        <input class="control-input" type="number" step="0.01" min="0" x-model="recordForm.price" placeholder="Lämna tomt om pris saknas">
+                    </div>
+                </div>
+
+                <div class="ios-card" style="padding:0.95rem;margin-top:1rem;">
+                    <div class="summary-row">
+                        <div>
+                            <div class="mini-note">Beräknad arbetstid</div>
+                            <div style="font-size:1.15rem;font-weight:900;" x-text="computedRecordDuration()"></div>
+                        </div>
+                        <span class="badge" :class="recordForm.price === '' ? 'status-danger' : 'status-ok'">
+                            <span x-text="recordForm.price === '' ? 'Pris saknas' : 'Pris angivet'"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <div x-show="modalError" class="badge status-danger" style="margin-top:1rem;" x-text="modalError"></div>
+
+                <div class="action-row" style="margin-top:1rem;">
+                    <button class="ios-btn-blue" @click="saveRecord()" :disabled="loading" x-text="loading ? 'Sparar...' : 'Spara körning'"></button>
+                    <button class="ios-btn-soft" @click="closeRecordModal()">Avbryt</button>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="userModalOpen" x-cloak class="overlay" @click.self="closeUserModal()">
+            <div class="ios-card modal-card" style="max-width:620px;">
+                <div class="summary-row" style="margin-bottom:1rem;">
+                    <div>
+                        <h2 class="section-title" x-text="userForm.id ? 'Redigera förare' : 'Ny förare'"></h2>
+                        <div class="mini-note">Admin skapar inloggning för varje förare här.</div>
+                    </div>
+                    <button class="danger-btn" @click="closeUserModal()">Stäng</button>
+                </div>
+
+                <div class="form-grid">
+                    <div class="input-group">
+                        <span class="label">Visningsnamn</span>
+                        <input class="control-input" x-model.trim="userForm.displayName">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Användarnamn</span>
+                        <input class="control-input" x-model.trim="userForm.username">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Lösenord</span>
+                        <div class="password-field">
+                            <input class="control-input" :type="showUserPassword ? 'text' : 'password'" x-model="userForm.password" :placeholder="userForm.id ? 'Lämna tomt för att behålla' : 'Lösenord'">
+                            <button class="password-toggle" type="button" @click="showUserPassword = !showUserPassword" :aria-label="showUserPassword ? 'Dölj lösenord' : 'Visa lösenord'">
+                                <svg x-show="!showUserPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+                                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <svg x-show="showUserPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+                                    <path d="m3 3 18 18"></path>
+                                    <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83"></path>
+                                    <path d="M9.36 5.37A9.92 9.92 0 0 1 12 5c7 0 11 7 11 7a21.8 21.8 0 0 1-2.46 3.36"></path>
+                                    <path d="M6.23 6.23A21.1 21.1 0 0 0 1 12s4 7 11 7a10.7 10.7 0 0 0 5-.93"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Behörighet</span>
+                        <select class="control-select" x-model="userForm.canMonitor">
+                            <option :value="false">Endast förare</option>
+                            <option :value="true">Förare + övervakare</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Legitimationnummer</span>
+                        <input class="control-input" x-model.trim="userForm.legitimationNumber">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Legitimation giltig till</span>
+                        <input class="control-input" type="date" x-model="userForm.legitimationExpiry">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Telefonnummer</span>
+                        <input class="control-input" x-model.trim="userForm.phone">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">E-post</span>
+                        <input class="control-input" type="email" x-model.trim="userForm.email">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Körkort giltig till</span>
+                        <input class="control-input" type="date" x-model="userForm.licenseExpiry">
+                    </div>
+                </div>
+
+                <div x-show="modalError" class="badge status-danger" style="margin-top:1rem;" x-text="modalError"></div>
+
+                <div class="action-row" style="margin-top:1rem;">
+                    <button class="ios-btn-blue" @click="saveUser()" :disabled="loading" x-text="loading ? 'Sparar...' : 'Spara förare'"></button>
+                    <button class="ios-btn-soft" @click="closeUserModal()">Avbryt</button>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="segmentsModalOpen" x-cloak class="overlay" @click.self="closeSegmentsModal()">
+            <div class="ios-card modal-card">
+                <div class="summary-row" style="margin-bottom:1rem;">
+                    <div>
+                        <h2 class="section-title">Arbeteperioder</h2>
+                        <div class="mini-note" x-text="segmentsModalUser ? 'Visar perioder för ' + segmentsModalUser.displayName : ''"></div>
+                    </div>
+                    <button class="danger-btn" @click="closeSegmentsModal()">Stäng</button>
+                </div>
+
+                <div class="list-shell" x-show="segmentRows().length">
+                    <template x-for="segment in segmentRows()" :key="segment.segmentType + '-' + segment.start">
+                        <div class="user-card">
+                            <div class="user-head">
+                                <div class="user-main">
+                                    <div class="user-name" x-text="segment.label"></div>
+                                    <div class="user-meta">
+                                        <span x-text="segment.startText"></span>
+                                        <span>·</span>
+                                        <span x-text="segment.endText"></span>
+                                        <span>·</span>
+                                        <span x-text="segment.durationText"></span>
+                                    </div>
+                                </div>
+                                <button class="danger-btn" @click="deleteSegment(segment)">Ta bort</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div x-show="!segmentRows().length" class="empty-state">Inga sparade perioder för vald förare.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function khederApp() {
+            return {
+                ready: false,
+                loading: false,
+                view: 'overview',
+                sessionUser: null,
+                users: [],
+                arbeteStatuses: [],
+                selfArbeteStatus: null,
+                dashboard: null,
+                selectedDate: '',
+                selectedDriverId: 'all',
+                authError: '',
+                error: '',
+                flash: '',
+                modalError: '',
+                recordModalOpen: false,
+                userModalOpen: false,
+                statusRefreshTimerId: null,
+                statusMessageHandler: null,
+                selfStatusHoldUntil: 0,
+                showLoginPassword: false,
+                showUserPassword: false,
+                loginForm: { username: '', password: '' },
+                recordForm: { id: null, userId: '', korningNumber: '', date: '', startTime: '', endTime: '', price: '' },
+                userForm: {
+                    id: null,
+                    displayName: '',
+                    username: '',
+                    password: '',
+                    canMonitor: false,
+                    legitimationNumber: '',
+                    legitimationExpiry: '',
+                    phone: '',
+                    email: '',
+                    licenseExpiry: ''
+                },
+                backups: [],
+                documentAlerts: [],
+                emailAlertsConfigured: false,
+                documentAlertsLoadedAt: 0,
+                segmentsModalOpen: false,
+                segmentsModalUser: null,
+                segmentsState: { segments: [], currentSegment: null, timelineShow48: false },
+
+                get isAdmin() {
+                    return this.sessionUser && this.sessionUser.role === 'admin';
+                },
+
+                get isSupervisorDriver() {
+                    return this.sessionUser && this.sessionUser.role === 'driver' && !!this.sessionUser.canMonitor;
+                },
+
+                get canSeeStatusPage() {
+                    return this.isAdmin || this.isSupervisorDriver;
+                },
+
+                get canSelectDriverScope() {
+                    return this.isAdmin || this.isSupervisorDriver;
+                },
+
+                get drivers() {
+                    return this.users.filter((user) => user.role === 'driver');
+                },
+
+                get currentUserStatus() {
+                    return this.selfArbeteStatus;
+                },
+
+                get isViewingOwnData() {
+                    if (!this.sessionUser) {
+                        return false;
+                    }
+                    if (this.isAdmin) {
+                        return this.selectedDriverId === 'all' || this.selectedDriverId === String(this.sessionUser.id);
+                    }
+                    if (this.isSupervisorDriver) {
+                        return String(this.selectedDriverId || this.sessionUser.id) === String(this.sessionUser.id);
+                    }
+                    return true;
+                },
+
+                get canManageVisibleRecords() {
+                    return this.isAdmin || this.isViewingOwnData;
+                },
+
+                async init() {
+                    this.selectedDate = this.today();
+                    this.statusMessageHandler = (event) => this.handleStatusMessage(event);
+                    window.addEventListener('message', this.statusMessageHandler);
+                    await this.loadSession();
+                    this.ready = true;
+                },
+
+                today() {
+                    return new Date().toISOString().split('T')[0];
+                },
+
+                async api(url, options = {}) {
+                    const headers = Object.assign({}, options.headers || {});
+                    if (options.body && !headers['Content-Type']) {
+                        headers['Content-Type'] = 'application/json';
+                    }
+                    const response = await fetch(url, Object.assign({ credentials: 'same-origin' }, options, { headers }));
+                    let data = {};
+                    try {
+                        data = await response.json();
+                    } catch (e) {
+                        data = {};
+                    }
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Request failed');
+                    }
+                    return data;
+                },
+
+                async loadSession() {
+                    this.error = '';
+                    this.flash = '';
+                    const data = await this.api('/api/session');
+                    if (!data.authenticated) {
+                        this.stopStatusRefresh();
+                        this.sessionUser = null;
+                        this.users = [];
+                        this.arbeteStatuses = [];
+                        this.selfArbeteStatus = null;
+                        this.backups = [];
+                        this.documentAlerts = [];
+                        this.emailAlertsConfigured = false;
+                        this.dashboard = null;
+                        this.selectedDriverId = 'all';
+                        return;
+                    }
+                    this.sessionUser = data.user;
+                    if (this.isAdmin || this.canSeeStatusPage) {
+                        await this.loadUsers();
+                    }
+                    if (this.isAdmin) {
+                        this.selectedDriverId = 'all';
+                    } else {
+                        this.selectedDriverId = String(this.sessionUser.id);
+                    }
+                    await this.loadArbeteStatuses();
+                    await this.loadAdminTools();
+                    this.startStatusRefresh();
+                    await this.refreshDashboard();
+                },
+
+                async loadUsers() {
+                    if (!(this.isAdmin || this.canSeeStatusPage)) {
+                        this.users = [];
+                        return;
+                    }
+                    const data = await this.api('/api/users');
+                    this.users = data.users || [];
+                },
+
+                async loadAdminTools() {
+                    if (this.isAdmin) {
+                        await this.loadBackups();
+                    } else {
+                        this.backups = [];
+                    }
+                    if (this.canSeeStatusPage) {
+                        await this.loadDocumentAlerts();
+                    } else {
+                        this.documentAlerts = [];
+                        this.emailAlertsConfigured = false;
+                        this.documentAlertsLoadedAt = 0;
+                    }
+                },
+
+                async loadBackups() {
+                    if (!this.isAdmin) {
+                        this.backups = [];
+                        return;
+                    }
+                    const data = await this.api('/api/admin/backups');
+                    this.backups = data.backups || [];
+                },
+
+                async loadDocumentAlerts(showErrors = false) {
+                    if (!this.canSeeStatusPage) {
+                        this.documentAlerts = [];
+                        this.emailAlertsConfigured = false;
+                        return;
+                    }
+                    try {
+                        const data = await this.api('/api/admin/document-alerts');
+                        this.documentAlerts = data.alerts || [];
+                        this.emailAlertsConfigured = !!data.emailConfigured;
+                        this.documentAlertsLoadedAt = Date.now();
+                    } catch (error) {
+                        if (showErrors) {
+                            this.error = error.message;
+                        }
+                    }
+                },
+
+                async loadArbeteStatuses() {
+                    if (!this.sessionUser) {
+                        this.arbeteStatuses = [];
+                        this.selfArbeteStatus = null;
+                        return;
+                    }
+                    const data = await this.api('/api/arbete/statuses');
+                    this.arbeteStatuses = data.statuses || [];
+                    const nextSelfStatus = data.selfStatus || null;
+                    const shouldHoldLocalSelf = this.selfStatusHoldUntil > Date.now() && this.selfArbeteStatus;
+                    if (!shouldHoldLocalSelf || !nextSelfStatus) {
+                        this.selfArbeteStatus = nextSelfStatus;
+                    }
+                },
+
+                startStatusRefresh() {
+                    this.stopStatusRefresh();
+                    if (!this.sessionUser) {
+                        return;
+                    }
+                    const refreshInterval = 1000;
+                    this.statusRefreshTimerId = setInterval(async () => {
+                        if (!this.sessionUser) {
+                            return;
+                        }
+                        try {
+                            await this.loadArbeteStatuses();
+                            if (this.canSeeStatusPage && (!this.documentAlertsLoadedAt || Date.now() - this.documentAlertsLoadedAt > 60000)) {
+                                await this.loadDocumentAlerts(false);
+                            }
+                        } catch (error) {
+                            console.error('Status refresh failed', error);
+                        }
+                    }, refreshInterval);
+                },
+
+                stopStatusRefresh() {
+                    if (this.statusRefreshTimerId) {
+                        clearInterval(this.statusRefreshTimerId);
+                        this.statusRefreshTimerId = null;
+                    }
+                },
+
+                handleStatusMessage(event) {
+                    if (event.origin !== window.location.origin) {
+                        return;
+                    }
+                    if (!event.data || event.data.type !== 'arbete-status' || !this.sessionUser) {
+                        return;
+                    }
+                    const payload = Object.assign({
+                        userId: this.sessionUser.id,
+                        displayName: this.sessionUser.displayName,
+                        username: this.sessionUser.username,
+                        role: this.sessionUser.role,
+                        canMonitor: !!this.sessionUser.canMonitor,
+                        state: 'rest',
+                        timerText: '00:00:00',
+                        workHoursText: '00:00:00',
+                        restHoursText: '00:00:00',
+                        windowMode: 24,
+                        warningLevel: 'normal'
+                    }, event.data.payload || {});
+                    payload.updatedAt = new Date().toISOString();
+                    this.selfStatusHoldUntil = Date.now() + 5000;
+                    this.selfArbeteStatus = payload;
+                    const index = this.arbeteStatuses.findIndex((status) => status.userId === this.sessionUser.id);
+                    if (index >= 0) {
+                        this.arbeteStatuses.splice(index, 1, payload);
+                    } else if (this.isAdmin || this.isSupervisorDriver) {
+                        this.arbeteStatuses.unshift(payload);
+                    }
+                },
+
+                async createBackup() {
+                    this.error = '';
+                    const data = await this.api('/api/admin/backup/create', { method: 'POST' });
+                    this.backups = data.backups || [];
+                    this.flash = 'Backup skapad: ' + data.backup;
+                },
+
+                async restoreBackup(backup) {
+                    if (!backup) {
+                        return;
+                    }
+                    if (!confirm('Återställ systemet från backup ' + backup.name + '?')) {
+                        return;
+                    }
+                    this.error = '';
+                    const data = await this.api('/api/admin/backup/restore', {
+                        method: 'POST',
+                        body: JSON.stringify({ backupName: backup.name })
+                    });
+                    this.backups = data.backups || [];
+                    this.flash = 'Systemet återställdes från ' + backup.name + '. Logga gärna in på nytt och verifiera allt.';
+                    await this.loadSession();
+                },
+
+                async exportSystemData() {
+                    this.error = '';
+                    const data = await this.api('/api/admin/export');
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'kheder_app_export_' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '.json';
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    URL.revokeObjectURL(link.href);
+                    this.flash = 'JSON-export skapad.';
+                },
+
+                async sendDocumentAlerts() {
+                    this.error = '';
+                    const data = await this.api('/api/admin/document-alerts/send', { method: 'POST' });
+                    this.flash = data.message || 'E-post skickad.';
+                },
+
+                async login() {
+                    this.loading = true;
+                    this.authError = '';
+                    try {
+                        await this.api('/api/login', {
+                            method: 'POST',
+                            body: JSON.stringify(this.loginForm)
+                        });
+                        this.loginForm.password = '';
+                        this.showLoginPassword = false;
+                        await this.loadSession();
+                    } catch (error) {
+                        this.authError = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async logout() {
+                    await this.api('/api/logout', { method: 'POST' });
+                    this.stopStatusRefresh();
+                    this.sessionUser = null;
+                    this.dashboard = null;
+                    this.users = [];
+                    this.arbeteStatuses = [];
+                    this.selfArbeteStatus = null;
+                    this.view = 'overview';
+                    this.loginForm = { username: '', password: '' };
+                    this.showLoginPassword = false;
+                },
+
+                roleLabel(user) {
+                    if (!user) {
+                        return '';
+                    }
+                    if (user.role === 'admin') {
+                        return 'Admin';
+                    }
+                    return user.canMonitor ? 'Förare + övervakare' : 'Förare';
+                },
+
+                roleClass(user) {
+                    if (!user) {
+                        return 'role-driver';
+                    }
+                    if (user.role === 'admin') {
+                        return 'role-admin';
+                    }
+                    return user.canMonitor ? 'role-supervisor' : 'role-driver';
+                },
+
+                accessSummary() {
+                    if (this.isAdmin) {
+                        return 'Admin ser alla flikar, alla förare och kan hantera behörigheter.';
+                    }
+                    if (this.isSupervisorDriver) {
+                        return 'Förare + övervakare ser egna sidor plus sidan Förarstatus.';
+                    }
+                    return 'Vanlig förare ser endast sina egna sidor: Översikt, Körning, Arbete och Ersättning.';
+                },
+
+                viewedDriverLabel() {
+                    if (!this.sessionUser) {
+                        return '';
+                    }
+                    if (!this.canSelectDriverScope) {
+                        return this.sessionUser.displayName;
+                    }
+                    if (this.selectedDriverId === 'all') {
+                        return 'Alla förare';
+                    }
+                    const selected = this.drivers.find((user) => String(user.id) === String(this.selectedDriverId));
+                    return selected ? selected.displayName : this.sessionUser.displayName;
+                },
+
+                statusPreview(user) {
+                    const fallback = {
+                        state: 'pending',
+                        timerText: '00:00:00',
+                        workHoursText: '00:00:00',
+                        restHoursText: '00:00:00',
+                        windowMode: 24,
+                        warningLevel: 'normal'
+                    };
+                    if (!user) {
+                        return fallback;
+                    }
+                    return this.arbeteStatuses.find((status) => status.userId === user.id) || fallback;
+                },
+
+                statusCardClass(user) {
+                    return this.statusClassFromStatus(this.statusPreview(user));
+                },
+
+                statusClassFromStatus(status) {
+                    if (!status) {
+                        return 'pending';
+                    }
+                    if (status.warningLevel === 'danger') {
+                        return 'danger';
+                    }
+                    if (status.warningLevel === 'warning') {
+                        return 'warning';
+                    }
+                    return status.state === 'work' ? 'work' : status.state === 'rest' ? 'rest' : 'pending';
+                },
+
+                statusCounter(user) {
+                    const timerText = this.statusPreview(user).timerText || '00:00:00';
+                    return timerText.slice(0, 5);
+                },
+
+                canManageRecord(record) {
+                    if (!record || !this.sessionUser) {
+                        return false;
+                    }
+                    return this.isAdmin || String(record.userId) === String(this.sessionUser.id);
+                },
+
+                headerTimerText(status) {
+                    const timerText = status?.timerText || '00:00:00';
+                    return timerText.slice(0, 5);
+                },
+
+                statusDescription(user) {
+                    const status = this.statusPreview(user);
+                    const workHours = status.workHoursText || '00:00:00';
+                    const restHours = status.restHoursText || '00:00:00';
+                    return `${status.windowMode || 24}h · Arbete ${workHours} · Vila ${restHours}`;
+                },
+
+                statusLabel(status) {
+                    if (!status) {
+                        return 'Öppna Arbete för att börja';
+                    }
+                    return status.state === 'work' ? 'Arbetar nu' : 'Vilar nu';
+                },
+
+                arbeteUrl() {
+                    return '/legacy/fk-taxi';
+                },
+
+                ersattningUrl() {
+                    if (!this.sessionUser) {
+                        return '/legacy/ersattning';
+                    }
+                    const driverId = this.canSelectDriverScope && this.selectedDriverId && this.selectedDriverId !== 'all'
+                        ? this.selectedDriverId
+                        : String(this.sessionUser.id);
+                    return '/legacy/ersattning?driver_id=' + encodeURIComponent(driverId);
+                },
+
+                async refreshDashboard() {
+                    if (!this.sessionUser) {
+                        return;
+                    }
+                    this.error = '';
+                    try {
+                        const params = new URLSearchParams();
+                        params.set('date', this.selectedDate || this.today());
+                        if (this.canSelectDriverScope) {
+                            params.set('driver_id', this.selectedDriverId || 'all');
+                        }
+                        const data = await this.api('/api/dashboard?' + params.toString());
+                        this.dashboard = data;
+                        await this.loadArbeteStatuses();
+                    } catch (error) {
+                        this.error = error.message;
+                    }
+                },
+
+                openRecordModal(record = null) {
+                    this.modalError = '';
+                    const defaultDriverId = this.isAdmin
+                        ? (this.selectedDriverId !== 'all' ? this.selectedDriverId : (this.drivers[0] ? String(this.drivers[0].id) : ''))
+                        : String(this.sessionUser.id);
+                    if (record) {
+                        this.recordForm = {
+                            id: record.id,
+                            userId: String(record.userId),
+                            korningNumber: record.korningNumber,
+                            date: record.date,
+                            startTime: record.startTime,
+                            endTime: record.endTime,
+                            price: record.price === null ? '' : String(record.price)
+                        };
+                    } else {
+                        this.recordForm = {
+                            id: null,
+                            userId: defaultDriverId,
+                            korningNumber: '',
+                            date: this.selectedDate || this.today(),
+                            startTime: '',
+                            endTime: '',
+                            price: ''
+                        };
+                    }
+                    this.recordModalOpen = true;
+                },
+
+                closeRecordModal() {
+                    this.recordModalOpen = false;
+                    this.modalError = '';
+                },
+
+                computedRecordDuration() {
+                    if (!this.recordForm.startTime || !this.recordForm.endTime) {
+                        return '—';
+                    }
+                    const [startHour, startMinute] = this.recordForm.startTime.split(':').map(Number);
+                    const [endHour, endMinute] = this.recordForm.endTime.split(':').map(Number);
+                    const start = startHour * 60 + startMinute;
+                    const end = endHour * 60 + endMinute;
+                    if (Number.isNaN(start) || Number.isNaN(end) || end <= start) {
+                        return 'Ogiltig tid';
+                    }
+                    return this.formatDuration(end - start);
+                },
+
+                async saveRecord() {
+                    this.loading = true;
+                    this.modalError = '';
+                    try {
+                        if (this.isAdmin && !this.recordForm.userId) {
+                            throw new Error('Välj förare');
+                        }
+                        const payload = {
+                            userId: this.isAdmin ? Number(this.recordForm.userId) : this.sessionUser.id,
+                            korningNumber: this.recordForm.korningNumber,
+                            date: this.recordForm.date,
+                            startTime: this.recordForm.startTime,
+                            endTime: this.recordForm.endTime,
+                            price: this.recordForm.price === '' ? '' : this.recordForm.price
+                        };
+                        const method = this.recordForm.id ? 'PUT' : 'POST';
+                        const url = this.recordForm.id ? '/api/records/' + this.recordForm.id : '/api/records';
+                        await this.api(url, {
+                            method,
+                            body: JSON.stringify(payload)
+                        });
+                        this.closeRecordModal();
+                        this.flash = this.recordForm.id ? 'Körning uppdaterad.' : 'Körning sparad.';
+                        await this.refreshDashboard();
+                    } catch (error) {
+                        this.modalError = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async removeRecord(record) {
+                    if (!confirm('Radera körning #' + record.korningNumber + '?')) {
+                        return;
+                    }
+                    this.error = '';
+                    try {
+                        await this.api('/api/records/' + record.id, { method: 'DELETE' });
+                        this.flash = 'Körning raderad.';
+                        await this.refreshDashboard();
+                    } catch (error) {
+                        this.error = error.message;
+                    }
+                },
+
+                openUserModal(user = null) {
+                    this.modalError = '';
+                    if (user) {
+                        this.userForm = {
+                            id: user.id,
+                            displayName: user.displayName,
+                            username: user.username,
+                            password: '',
+                            canMonitor: !!user.canMonitor,
+                            legitimationNumber: user.legitimationNumber || '',
+                            legitimationExpiry: user.legitimationExpiry || '',
+                            phone: user.phone || '',
+                            email: user.email || '',
+                            licenseExpiry: user.licenseExpiry || ''
+                        };
+                    } else {
+                        this.userForm = {
+                            id: null,
+                            displayName: '',
+                            username: '',
+                            password: '',
+                            canMonitor: false,
+                            legitimationNumber: '',
+                            legitimationExpiry: '',
+                            phone: '',
+                            email: '',
+                            licenseExpiry: ''
+                        };
+                    }
+                    this.showUserPassword = false;
+                    this.userModalOpen = true;
+                },
+
+                closeUserModal() {
+                    this.userModalOpen = false;
+                    this.showUserPassword = false;
+                    this.modalError = '';
+                },
+
+                async saveUser() {
+                    this.loading = true;
+                    this.modalError = '';
+                    try {
+                        if (!this.userForm.legitimationNumber || !this.userForm.legitimationExpiry || !this.userForm.phone || !this.userForm.email || !this.userForm.licenseExpiry) {
+                            throw new Error('Fyll i alla obligatoriska fält för föraren');
+                        }
+                        const payload = {
+                            id: this.userForm.id,
+                            displayName: this.userForm.displayName,
+                            username: this.userForm.username,
+                            password: this.userForm.password,
+                            canMonitor: this.userForm.canMonitor === true || this.userForm.canMonitor === 'true',
+                            legitimationNumber: this.userForm.legitimationNumber,
+                            legitimationExpiry: this.userForm.legitimationExpiry,
+                            phone: this.userForm.phone,
+                            email: this.userForm.email,
+                            licenseExpiry: this.userForm.licenseExpiry
+                        };
+                        const method = this.userForm.id ? 'PUT' : 'POST';
+                        const url = this.userForm.id ? '/api/users/' + this.userForm.id : '/api/users';
+                        await this.api(url, {
+                            method,
+                            body: JSON.stringify(payload)
+                        });
+                        this.closeUserModal();
+                        this.flash = this.userForm.id ? 'Förare uppdaterad.' : 'Förare skapad.';
+                        await this.loadUsers();
+                        await this.refreshDashboard();
+                    } catch (error) {
+                        this.modalError = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async removeUser(user) {
+                    if (!confirm('Radera föraren ' + user.displayName + '?')) {
+                        return;
+                    }
+                    this.error = '';
+                    try {
+                        await this.api('/api/users/' + user.id, { method: 'DELETE' });
+                        this.flash = 'Förare raderad.';
+                        await this.loadUsers();
+                        if (this.selectedDriverId === String(user.id)) {
+                            this.selectedDriverId = 'all';
+                        }
+                        await this.refreshDashboard();
+                    } catch (error) {
+                        this.error = error.message;
+                    }
+                },
+
+                async resetArbetePeriods(user) {
+                    if (!user || !this.isAdmin) {
+                        return;
+                    }
+                    if (!confirm('Rensa alla arbete- och viloperioder för ' + user.displayName + '?')) {
+                        return;
+                    }
+                    this.error = '';
+                    try {
+                        await this.api('/api/arbete/reset', {
+                            method: 'POST',
+                            body: JSON.stringify({ userId: user.id })
+                        });
+                        this.flash = 'Arbete-perioder återställda för ' + user.displayName + '.';
+                        await this.loadArbeteStatuses();
+                    } catch (error) {
+                        this.error = error.message;
+                    }
+                },
+
+                async openSegmentsModal(user) {
+                    if (!user || !this.isAdmin) {
+                        return;
+                    }
+                    this.error = '';
+                    this.segmentsModalUser = user;
+                    const data = await this.api('/api/arbete/segments?user_id=' + user.id);
+                    this.segmentsState = data.state || { segments: [], currentSegment: null, timelineShow48: false };
+                    this.segmentsModalOpen = true;
+                },
+
+                closeSegmentsModal() {
+                    this.segmentsModalOpen = false;
+                    this.segmentsModalUser = null;
+                    this.segmentsState = { segments: [], currentSegment: null, timelineShow48: false };
+                },
+
+                segmentRows() {
+                    const rows = (this.segmentsState.segments || []).map((segment) => ({
+                        segmentType: segment.type,
+                        start: Number(segment.start),
+                        startText: this.formatDateTime(segment.start),
+                        endText: this.formatDateTime(segment.end),
+                        durationText: this.formatHoursMinutesFromMs(Number(segment.end) - Number(segment.start)),
+                        label: segment.type === 'work' ? 'Arbete' : 'Vila'
+                    }));
+                    if (this.segmentsState.currentSegment) {
+                        rows.unshift({
+                            segmentType: 'current',
+                            start: Number(this.segmentsState.currentSegment.start),
+                            startText: this.formatDateTime(this.segmentsState.currentSegment.start),
+                            endText: 'Pågår nu',
+                            durationText: this.formatHoursMinutesFromMs(Date.now() - Number(this.segmentsState.currentSegment.start)),
+                            label: this.segmentsState.currentSegment.type === 'work' ? 'Pågående Arbete' : 'Pågående Vila'
+                        });
+                    }
+                    return rows.sort((a, b) => b.start - a.start);
+                },
+
+                async deleteSegment(segment) {
+                    if (!this.segmentsModalUser || !segment) {
+                        return;
+                    }
+                    if (!confirm('Ta bort vald period för ' + this.segmentsModalUser.displayName + '?')) {
+                        return;
+                    }
+                    this.error = '';
+                    await this.api('/api/arbete/segments/delete', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            userId: this.segmentsModalUser.id,
+                            segmentType: segment.segmentType,
+                            segmentStart: segment.start
+                        })
+                    });
+                    this.flash = 'Period borttagen för ' + this.segmentsModalUser.displayName + '.';
+                    await this.openSegmentsModal(this.segmentsModalUser);
+                    await this.loadArbeteStatuses();
+                },
+
+                formatCurrency(value) {
+                    return new Intl.NumberFormat('sv-SE', {
+                        style: 'currency',
+                        currency: 'SEK',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2
+                    }).format(Number(value || 0));
+                },
+
+                formatDuration(minutes) {
+                    const total = Number(minutes || 0);
+                    const hours = Math.floor(total / 60);
+                    const mins = total % 60;
+                    if (!total) {
+                        return '0h 0m';
+                    }
+                    return hours + 'h ' + mins + 'm';
+                },
+
+                formatDate(value) {
+                    if (!value) {
+                        return '—';
+                    }
+                    return new Intl.DateTimeFormat('sv-SE', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    }).format(new Date(value + 'T00:00:00'));
+                },
+
+                formatDateTime(value) {
+                    if (!value) {
+                        return '—';
+                    }
+                    return new Intl.DateTimeFormat('sv-SE', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }).format(new Date(Number(value)));
+                },
+
+                formatHoursMinutesFromMs(value) {
+                    const totalMinutes = Math.max(0, Math.round(Number(value || 0) / 60000));
+                    return this.formatDuration(totalMinutes);
+                }
+            };
+        }
+    </script>
+</body>
+</html>
