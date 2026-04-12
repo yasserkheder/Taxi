@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Kheder App Local</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f4f7fb;
+            --card: rgba(255, 255, 255, 0.92);
+            --line: rgba(148, 163, 184, 0.18);
+            --text: #0f172a;
+            --muted: #64748b;
+            --blue: #2563eb;
+            --green: #16a34a;
+            --amber: #d97706;
+            --red: #dc2626;
+            --shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 30%),
+                radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 26%),
+                var(--bg);
+            color: var(--text);
+        }
+        [x-cloak], .hidden { display: none !important; }
+        .page-shell {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .ios-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 26px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+        .app-header {
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+        .header-shell {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .brand {
+            display: flex;
+            gap: 0.9rem;
+            align-items: center;
+        }
+        .mark {
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            flex-shrink: 0;
+        }
+        .title {
+            margin: 0;
+            font-size: 1.45rem;
+            font-weight: 900;
+            line-height: 1.05;
+        }
+        .mini-note {
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+        .header-actions {
+            margin-inline-start: auto;
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            border-radius: 999px;
+            padding: 0.56rem 0.9rem;
+            font-size: 0.82rem;
+            font-weight: 800;
+            background: rgba(15, 23, 42, 0.06);
+            color: var(--text);
+        }
+        .button,
+        .soft-button,
+        .danger-button,
+        .tab-btn {
+            border: 0;
+            border-radius: 999px;
+            font: inherit;
+            cursor: pointer;
+            font-weight: 800;
+        }
+        .button {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            padding: 0.8rem 1rem;
+        }
+        .soft-button {
+            background: rgba(37, 99, 235, 0.12);
+            color: var(--blue);
+            padding: 0.8rem 1rem;
+        }
+        .danger-button {
+            background: rgba(220, 38, 38, 0.12);
+            color: var(--red);
+            padding: 0.8rem 1rem;
+        }
+        .tabs {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .tab-btn {
+            padding: 0.82rem 1rem;
+            color: var(--muted);
+            background: rgba(255,255,255,0.72);
+            border: 1px solid var(--line);
+        }
+        .tab-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-color: transparent;
+        }
+        .section-shell {
+            padding: 1rem;
+        }
+        .hero-card,
+        .content-card {
+            padding: 1rem;
+        }
+        .summary-row,
+        .action-row,
+        .user-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .section-title {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 900;
+        }
+        .helper-grid,
+        .metrics-grid,
+        .form-grid {
+            display: grid;
+            gap: 0.9rem;
+        }
+        .helper-grid,
+        .metrics-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            margin-top: 1rem;
+        }
+        .form-grid {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            margin-top: 1rem;
+        }
+        .record-stat,
+        .user-card {
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            background: rgba(255,255,255,0.84);
+        }
+        .record-stat {
+            padding: 0.95rem;
+        }
+        .record-stat .k {
+            color: var(--muted);
+            font-size: 0.78rem;
+            margin-bottom: 0.35rem;
+        }
+        .record-stat .v {
+            font-size: 0.98rem;
+            font-weight: 900;
+            line-height: 1.5;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .label {
+            color: var(--muted);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .control-input,
+        .control-textarea {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            background: rgba(255,255,255,0.95);
+            padding: 0.82rem 0.9rem;
+            font: inherit;
+        }
+        .control-textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+        .list-shell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .user-card {
+            padding: 0.95rem;
+        }
+        .user-name {
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        .user-meta {
+            color: var(--muted);
+            font-size: 0.82rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.35rem;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            border-radius: 999px;
+            padding: 0.45rem 0.75rem;
+            font-size: 0.78rem;
+            font-weight: 900;
+        }
+        .badge.blue { background: rgba(37,99,235,0.12); color: var(--blue); }
+        .badge.green { background: rgba(22,163,74,0.12); color: var(--green); }
+        .badge.amber { background: rgba(217,119,6,0.12); color: var(--amber); }
+        .badge.red { background: rgba(220,38,38,0.12); color: var(--red); }
+        .embed-frame {
+            width: 100%;
+            min-height: 820px;
+            border: 0;
+            border-radius: 24px;
+            background: #fff;
+        }
+        .notice {
+            margin: 1rem;
+            border-radius: 18px;
+            padding: 0.85rem 1rem;
+            font-weight: 700;
+        }
+        .notice.ok { background: rgba(22,163,74,0.12); color: var(--green); }
+        .notice.error { background: rgba(220,38,38,0.12); color: var(--red); }
+        .login-wrap {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+        }
+        .login-card {
+            width: min(460px, 100%);
+            padding: 1.2rem;
+        }
+        .empty-state {
+            margin-top: 1rem;
+            padding: 1rem;
+            text-align: center;
+            color: var(--muted);
+            border: 1px dashed rgba(148, 163, 184, 0.45);
+            border-radius: 18px;
+        }
+        @media (max-width: 900px) {
+            .embed-frame { min-height: 700px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginView" class="login-wrap">
+        <div class="ios-card login-card">
+            <div class="brand">
+                <div class="mark">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M3 17h18"></path>
+                        <path d="M5 17l2-7h10l2 7"></path>
+                        <circle cx="7.5" cy="17.5" r="1.5"></circle>
+                        <circle cx="16.5" cy="17.5" r="1.5"></circle>
+                        <path d="M7 10V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="title">Kheder App Local</h1>
+                    <div class="mini-note">Tillfällig lokal version med samma huvudflöde som programmet och lagring i Safari.</div>
+                </div>
+            </div>
+            <div id="loginError" class="notice error hidden"></div>
+            <div class="form-grid">
+                <div class="input-group" style="grid-column:1 / -1;">
+                    <span class="label">Användarnamn</span>
+                    <input id="loginUsername" class="control-input" autocomplete="username">
+                </div>
+                <div class="input-group" style="grid-column:1 / -1;">
+                    <span class="label">Lösenord</span>
+                    <input id="loginPassword" class="control-input" type="password" autocomplete="current-password">
+                </div>
+            </div>
+            <div class="action-row" style="margin-top:1rem;">
+                <button id="loginButton" class="button">Logga in</button>
+                <span class="mini-note">Användarlistan hämtas från taxi-pilot-users.json.</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="appView" class="hidden">
+        <header class="app-header">
+            <div class="page-shell">
+                <div class="ios-card hero-card">
+                    <div class="header-shell">
+                        <div class="brand">
+                            <div class="mark">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <path d="M3 17h18"></path>
+                                    <path d="M5 17l2-7h10l2 7"></path>
+                                    <circle cx="7.5" cy="17.5" r="1.5"></circle>
+                                    <circle cx="16.5" cy="17.5" r="1.5"></circle>
+                                    <path d="M7 10V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h1 class="title">Kheder App Local</h1>
+                                <div id="userLine" class="mini-note"></div>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <span id="roleBadge" class="pill"></span>
+                            <span id="arbeteHeaderStatus" class="pill hidden"></span>
+                            <span class="pill">Lokal lagring</span>
+                            <button id="logoutButton" class="danger-button">Logga ut</button>
+                        </div>
+                    </div>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-view="overview">Översikt</button>
+                        <button class="tab-btn" data-view="korning">Körning</button>
+                        <button class="tab-btn" data-view="arbete">Arbete</button>
+                        <button class="tab-btn" data-view="ersattning">Ersättning</button>
+                        <button class="tab-btn" data-view="help">Hjälp</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="flashNotice" class="notice ok hidden"></div>
+        <div id="errorNotice" class="notice error hidden"></div>
+
+        <main class="page-shell">
+            <section id="overviewView" class="section-shell">
+                <div class="ios-card content-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Översikt</h2>
+                            <div class="mini-note">Lokal översikt för aktuell användare. Körningsdata delas till admin via rapport eller JSON.</div>
+                        </div>
+                        <span id="overviewScope" class="badge blue"></span>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="record-stat">
+                            <div class="k">Körningar idag</div>
+                            <div id="overviewTodayCount" class="v">0</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Intäkt idag</div>
+                            <div id="overviewTodayTotal" class="v">0 kr</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Intäkt denna vecka</div>
+                            <div id="overviewWeekTotal" class="v">0 kr</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Pilotförslag</div>
+                            <div class="v">Körning bör få central export, delning och audit i huvudsystemet.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="korningView" class="section-shell hidden">
+                <div class="ios-card content-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Körning</h2>
+                            <div class="mini-note">Spara körningar lokalt och dela dem för granskning. Samma arbetsflöde kan flyttas senare till huvudsystemet.</div>
+                        </div>
+                        <span class="badge amber">Pilotläge</span>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <span class="label">Datum</span>
+                            <input id="rideDate" class="control-input" type="date">
+                        </div>
+                        <div class="input-group">
+                            <span class="label">Körning nr</span>
+                            <input id="rideNumber" class="control-input">
+                        </div>
+                        <div class="input-group">
+                            <span class="label">Starttid</span>
+                            <input id="rideStart" class="control-input" type="time">
+                        </div>
+                        <div class="input-group">
+                            <span class="label">Sluttid</span>
+                            <input id="rideEnd" class="control-input" type="time">
+                        </div>
+                        <div class="input-group">
+                            <span class="label">Pris</span>
+                            <input id="ridePrice" class="control-input" type="number" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="action-row" style="margin-top:1rem;">
+                        <button id="saveRideButton" class="button">Spara körning</button>
+                        <div class="input-group" style="min-width:180px;">
+                            <span class="label">Rapportperiod</span>
+                            <select id="reportScope" class="control-input">
+                                <option value="day">Idag</option>
+                                <option value="week">Denna vecka</option>
+                                <option value="month">Denna månad</option>
+                                <option value="all">Alla körningar</option>
+                            </select>
+                        </div>
+                        <button id="shareReportButton" class="soft-button">Dela rapport</button>
+                        <button id="copyJsonButton" class="soft-button">Kopiera JSON</button>
+                        <button id="clearRideFormButton" class="soft-button">Rensa fält</button>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="record-stat">
+                            <div class="k">Idag</div>
+                            <div id="todaySummary" class="v">0 körningar · 0 kr</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Denna vecka</div>
+                            <div id="weekSummary" class="v">0 körningar · 0 kr</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Denna månad</div>
+                            <div id="monthSummary" class="v">0 körningar · 0 kr</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ios-card content-card" style="margin-top:1rem;">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Granskning</h2>
+                            <div class="mini-note">Admin kan klistra in en JSON-rapport som skickats från en förare och kontrollera alla poster.</div>
+                        </div>
+                        <span id="auditModeBadge" class="badge blue"></span>
+                    </div>
+                    <div id="auditPanel">
+                        <div class="input-group" style="margin-top:1rem;">
+                            <span class="label">JSON-rapport</span>
+                            <textarea id="auditInput" class="control-textarea"></textarea>
+                        </div>
+                        <div class="action-row" style="margin-top:1rem;">
+                            <button id="importAuditButton" class="button">Importera rapport</button>
+                            <button id="clearAuditButton" class="soft-button">Rensa</button>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="record-stat">
+                                <div class="k">Förare</div>
+                                <div id="auditDriver" class="v">—</div>
+                            </div>
+                            <div class="record-stat">
+                                <div class="k">Poster</div>
+                                <div id="auditCount" class="v">0</div>
+                            </div>
+                            <div class="record-stat">
+                                <div class="k">Totalt</div>
+                                <div id="auditTotal" class="v">0 kr</div>
+                            </div>
+                        </div>
+                        <div id="auditList" class="list-shell"></div>
+                        <div id="auditEmpty" class="empty-state">Ingen rapport importerad ännu.</div>
+                    </div>
+                </div>
+
+                <div id="ridesList" class="list-shell"></div>
+                <div id="ridesEmpty" class="empty-state">Inga körningar sparade ännu.</div>
+            </section>
+
+            <section id="arbeteView" class="section-shell hidden">
+                <div class="ios-card content-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Arbete</h2>
+                            <div class="mini-note">Samma befintliga Arbete-sida används lokalt via GitHub/Safari.</div>
+                        </div>
+                        <span class="badge green">FK Taxi</span>
+                    </div>
+                    <iframe id="arbeteFrame" class="embed-frame" src="./FK%20Taxi.html" title="Arbete"></iframe>
+                </div>
+            </section>
+
+            <section id="ersattningView" class="section-shell hidden">
+                <div class="ios-card content-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Ersättning</h2>
+                            <div class="mini-note">Samma befintliga Ersättning-sida används lokalt via GitHub/Safari.</div>
+                        </div>
+                        <span class="badge blue">Ersättning</span>
+                    </div>
+                    <iframe class="embed-frame" src="./Ers%C3%A4ttning.html" title="Ersättning"></iframe>
+                </div>
+            </section>
+
+            <section id="helpView" class="section-shell hidden">
+                <div class="ios-card content-card">
+                    <div class="summary-row">
+                        <div>
+                            <h2 class="section-title">Hjälp</h2>
+                            <div class="mini-note">Kort guide för den lokala HTML-versionen.</div>
+                        </div>
+                        <span class="badge green">Lokalt läge</span>
+                    </div>
+                    <div class="helper-grid">
+                        <div class="record-stat">
+                            <div class="k">Första gången</div>
+                            <div class="v">Lägg in förare i filen taxi-pilot-users.json på GitHub. Varje användare behöver username, password, displayName och role.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Inloggning</div>
+                            <div class="v">Alla öppnar samma HTML-fil från GitHub. Inloggningen är tillfällig och avsedd för pilotdrift, inte för slutlig säker produktion.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Lokal lagring</div>
+                            <div class="v">Körningar sparas per användare i Safari/localStorage på den enhet som används.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Granskning</div>
+                            <div class="v">Förare delar rapport eller JSON från Körning. Admin importerar JSON i samma sida för kontroll och uppföljning.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Övergång senare</div>
+                            <div class="v">Samma körningsfält och auditflöde bör flyttas till huvudsystemet när ni är redo för central publicering.</div>
+                        </div>
+                        <div class="record-stat">
+                            <div class="k">Viktigt</div>
+                            <div class="v">Om Safari-data rensas försvinner lokal data. Dela eller exportera därför rapporter regelbundet under pilotdriften.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const DEFAULT_USERS = [
+            { username: 'admin', password: 'Admin0255', displayName: 'Admin', role: 'admin' },
+            { username: 'yasser', password: 'Yasser123', displayName: 'Yasser Kheder', role: 'driver' },
+            { username: 'shadi', password: 'Shadi123', displayName: 'Shadi', role: 'driver' }
+        ];
+
+        const state = {
+            users: [],
+            session: null,
+            view: 'overview',
+            rides: [],
+            importedAudit: null,
+            arbeteSyncTimer: null
+        };
+
+        const els = {
+            loginView: document.getElementById('loginView'),
+            appView: document.getElementById('appView'),
+            loginError: document.getElementById('loginError'),
+            loginUsername: document.getElementById('loginUsername'),
+            loginPassword: document.getElementById('loginPassword'),
+            loginButton: document.getElementById('loginButton'),
+            logoutButton: document.getElementById('logoutButton'),
+            flashNotice: document.getElementById('flashNotice'),
+            errorNotice: document.getElementById('errorNotice'),
+            userLine: document.getElementById('userLine'),
+            roleBadge: document.getElementById('roleBadge'),
+            arbeteHeaderStatus: document.getElementById('arbeteHeaderStatus'),
+            tabs: [...document.querySelectorAll('.tab-btn')],
+            views: {
+                overview: document.getElementById('overviewView'),
+                korning: document.getElementById('korningView'),
+                arbete: document.getElementById('arbeteView'),
+                ersattning: document.getElementById('ersattningView'),
+                help: document.getElementById('helpView')
+            },
+            overviewScope: document.getElementById('overviewScope'),
+            overviewTodayCount: document.getElementById('overviewTodayCount'),
+            overviewTodayTotal: document.getElementById('overviewTodayTotal'),
+            overviewWeekTotal: document.getElementById('overviewWeekTotal'),
+            rideDate: document.getElementById('rideDate'),
+            rideNumber: document.getElementById('rideNumber'),
+            rideStart: document.getElementById('rideStart'),
+            rideEnd: document.getElementById('rideEnd'),
+            ridePrice: document.getElementById('ridePrice'),
+            reportScope: document.getElementById('reportScope'),
+            saveRideButton: document.getElementById('saveRideButton'),
+            shareReportButton: document.getElementById('shareReportButton'),
+            copyJsonButton: document.getElementById('copyJsonButton'),
+            clearRideFormButton: document.getElementById('clearRideFormButton'),
+            todaySummary: document.getElementById('todaySummary'),
+            weekSummary: document.getElementById('weekSummary'),
+            monthSummary: document.getElementById('monthSummary'),
+            ridesList: document.getElementById('ridesList'),
+            ridesEmpty: document.getElementById('ridesEmpty'),
+            auditModeBadge: document.getElementById('auditModeBadge'),
+            auditInput: document.getElementById('auditInput'),
+            importAuditButton: document.getElementById('importAuditButton'),
+            clearAuditButton: document.getElementById('clearAuditButton'),
+            auditDriver: document.getElementById('auditDriver'),
+            auditCount: document.getElementById('auditCount'),
+            auditTotal: document.getElementById('auditTotal'),
+            auditList: document.getElementById('auditList'),
+            auditEmpty: document.getElementById('auditEmpty'),
+            arbeteFrame: document.getElementById('arbeteFrame')
+        };
+
+        function todayString() {
+            return new Date().toISOString().slice(0, 10);
+        }
+
+        function rideStoreKey() {
+            return `kheder_local_rides_${state.session.username}`;
+        }
+
+        function flash(message) {
+            els.flashNotice.textContent = message;
+            els.flashNotice.classList.remove('hidden');
+            setTimeout(() => els.flashNotice.classList.add('hidden'), 2800);
+        }
+
+        function fail(message) {
+            els.errorNotice.textContent = message;
+            els.errorNotice.classList.remove('hidden');
+            setTimeout(() => els.errorNotice.classList.add('hidden'), 3600);
+        }
+
+        function formatMoney(value) {
+            return new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(Number(value || 0));
+        }
+
+        function formatDateTime(value) {
+            return new Intl.DateTimeFormat('sv-SE', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(new Date(value));
+        }
+
+        function formatDuration(minutes) {
+            const safe = Math.max(0, Math.round(Number(minutes || 0)));
+            const hours = Math.floor(safe / 60);
+            const mins = safe % 60;
+            return `${hours}h ${mins}m`;
+        }
+
+        function weekKey(dateString) {
+            const date = new Date(`${dateString}T00:00:00`);
+            const day = (date.getDay() + 6) % 7;
+            date.setDate(date.getDate() - day);
+            return date.toISOString().slice(0, 10);
+        }
+
+        function monthKey(dateString) {
+            return (dateString || '').slice(0, 7);
+        }
+
+        function loadRides() {
+            const raw = localStorage.getItem(rideStoreKey());
+            state.rides = raw ? JSON.parse(raw) : [];
+        }
+
+        function saveRides() {
+            localStorage.setItem(rideStoreKey(), JSON.stringify(state.rides));
+        }
+
+        function setView(view) {
+            state.view = view;
+            els.tabs.forEach((tab) => tab.classList.toggle('active', tab.dataset.view === view));
+            Object.entries(els.views).forEach(([name, node]) => node.classList.toggle('hidden', name !== view));
+        }
+
+        function stopArbeteSync() {
+            if (state.arbeteSyncTimer) {
+                clearInterval(state.arbeteSyncTimer);
+                state.arbeteSyncTimer = null;
+            }
+            els.arbeteHeaderStatus.classList.add('hidden');
+        }
+
+        function syncArbeteHeaderFromFrame() {
+            if (!state.session || !els.arbeteFrame) return;
+            try {
+                const doc = els.arbeteFrame.contentDocument;
+                const win = els.arbeteFrame.contentWindow;
+                if (!doc || !win) return;
+
+                const dayType = doc.getElementById('holiday-toggle-label');
+                const driverInfo = doc.querySelector('.driver-info');
+                const currentDriver = doc.getElementById('current-driver-name');
+                if (dayType) dayType.style.display = 'none';
+                if (driverInfo) driverInfo.style.display = 'none';
+                if (currentDriver) {
+                    currentDriver.style.display = 'none';
+                    currentDriver.innerHTML = `👤 ${state.session.displayName}`;
+                }
+
+                const select = doc.getElementById('driver-select');
+                if (select && select.options.length) {
+                    const targetOption = [...select.options].find((option) => option.textContent.trim().toLowerCase() === state.session.displayName.trim().toLowerCase());
+                    if (targetOption && select.value !== targetOption.value) {
+                        select.value = targetOption.value;
+                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+
+                const periodType = (doc.getElementById('period-type')?.textContent || '').trim() || '—';
+                const periodTimer = (doc.getElementById('period-timer')?.textContent || '').trim() || '00:00:00';
+                if (periodType && periodType !== '—') {
+                    els.arbeteHeaderStatus.textContent = `${periodType} · ${periodTimer.slice(0, 5)}`;
+                    els.arbeteHeaderStatus.classList.remove('hidden');
+                }
+            } catch (error) {}
+        }
+
+        function startArbeteSync() {
+            stopArbeteSync();
+            syncArbeteHeaderFromFrame();
+            state.arbeteSyncTimer = setInterval(syncArbeteHeaderFromFrame, 1000);
+        }
+
+        function scopeLabel(scope) {
+            if (scope === 'week') return 'Denna vecka';
+            if (scope === 'month') return 'Denna månad';
+            if (scope === 'all') return 'Alla körningar';
+            return 'Idag';
+        }
+
+        function ridesForScope(scope) {
+            const today = todayString();
+            if (scope === 'week') {
+                const currentWeek = weekKey(today);
+                return state.rides.filter((item) => weekKey(item.date) === currentWeek);
+            }
+            if (scope === 'month') {
+                const currentMonth = monthKey(today);
+                return state.rides.filter((item) => monthKey(item.date) === currentMonth);
+            }
+            if (scope === 'all') {
+                return [...state.rides];
+            }
+            return state.rides.filter((item) => item.date === today);
+        }
+
+        function buildAuditPayload() {
+            const scope = els.reportScope.value || 'day';
+            const scopedRides = ridesForScope(scope).sort((a, b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime));
+            return {
+                meta: {
+                    source: 'KhederAppLocal',
+                    generatedAt: new Date().toISOString(),
+                    driverName: state.session.displayName,
+                    driverUsername: state.session.username,
+                    reportScope: scope,
+                    reportScopeLabel: scopeLabel(scope),
+                    proposal: 'Flytta samma Körning-flöde till huvudsystemet med central audit, delning och export.'
+                },
+                rides: scopedRides
+            };
+        }
+
+        function buildAuditText() {
+            const payload = buildAuditPayload();
+            const lines = [
+                'Körningsrapport',
+                `Förare: ${payload.meta.driverName}`,
+                `Användarnamn: ${payload.meta.driverUsername}`,
+                `Period: ${payload.meta.reportScopeLabel}`,
+                `Skapad: ${formatDateTime(payload.meta.generatedAt)}`,
+                `Poster: ${payload.rides.length}`,
+                ''
+            ];
+            payload.rides.forEach((record) => {
+                lines.push(`${record.date} · #${record.korningNumber} · ${record.startTime}-${record.endTime} · ${record.price === null ? 'Pris saknas' : formatMoney(record.price)}`);
+            });
+            lines.push('');
+            lines.push(payload.meta.proposal);
+            return lines.join('\n');
+        }
+
+        async function shareAudit() {
+            const text = buildAuditText();
+            try {
+                if (navigator.share) {
+                    await navigator.share({ title: 'Körningsrapport', text });
+                    flash('Rapport delad.');
+                    return;
+                }
+            } catch (error) {}
+            await navigator.clipboard.writeText(text);
+            flash('Rapport kopierad.');
+        }
+
+        async function copyAuditJson() {
+            await navigator.clipboard.writeText(JSON.stringify(buildAuditPayload(), null, 2));
+            flash('JSON kopierad.');
+        }
+
+        function rideDuration(record) {
+            const [sh, sm] = (record.startTime || '00:00').split(':').map(Number);
+            const [eh, em] = (record.endTime || '00:00').split(':').map(Number);
+            return Math.max(0, (eh * 60 + em) - (sh * 60 + sm));
+        }
+
+        function renderOverview() {
+            els.overviewScope.textContent = state.session.displayName;
+            const today = todayString();
+            const todayRides = state.rides.filter((item) => item.date === today);
+            const weekStart = weekKey(today);
+            const weekRides = state.rides.filter((item) => weekKey(item.date) === weekStart);
+            const currentMonth = monthKey(today);
+            const monthRides = state.rides.filter((item) => monthKey(item.date) === currentMonth);
+            els.overviewTodayCount.textContent = String(todayRides.length);
+            els.overviewTodayTotal.textContent = formatMoney(todayRides.reduce((sum, item) => sum + Number(item.price || 0), 0));
+            els.overviewWeekTotal.textContent = formatMoney(weekRides.reduce((sum, item) => sum + Number(item.price || 0), 0));
+            els.todaySummary.textContent = `${todayRides.length} körningar · ${formatMoney(todayRides.reduce((sum, item) => sum + Number(item.price || 0), 0))}`;
+            els.weekSummary.textContent = `${weekRides.length} körningar · ${formatMoney(weekRides.reduce((sum, item) => sum + Number(item.price || 0), 0))}`;
+            els.monthSummary.textContent = `${monthRides.length} körningar · ${formatMoney(monthRides.reduce((sum, item) => sum + Number(item.price || 0), 0))}`;
+        }
+
+        function renderRides() {
+            els.ridesList.innerHTML = '';
+            if (!state.rides.length) {
+                els.ridesEmpty.classList.remove('hidden');
+            } else {
+                els.ridesEmpty.classList.add('hidden');
+            }
+            state.rides.forEach((record) => {
+                const node = document.createElement('div');
+                node.className = 'user-card';
+                node.innerHTML = `
+                    <div class="user-head">
+                        <div>
+                            <div class="user-name">Körning #${record.korningNumber}</div>
+                            <div class="user-meta">
+                                <span>${record.date}</span>
+                                <span>·</span>
+                                <span>${record.startTime}–${record.endTime}</span>
+                                <span>·</span>
+                                <span>${formatDuration(rideDuration(record))}</span>
+                            </div>
+                            <div class="user-meta">
+                                <span>Skapad ${formatDateTime(record.createdAt)}</span>
+                                <span>·</span>
+                                <span>Uppdaterad ${formatDateTime(record.updatedAt)}</span>
+                                <span>·</span>
+                                <span>${record.price === null ? 'Pris saknas' : formatMoney(record.price)}</span>
+                            </div>
+                        </div>
+                        <span class="badge ${record.price === null ? 'red' : 'green'}">${record.price === null ? 'Pris saknas' : 'Sparad'}</span>
+                    </div>
+                `;
+                els.ridesList.appendChild(node);
+            });
+        }
+
+        function renderAudit() {
+            els.auditModeBadge.textContent = state.session.role === 'admin' ? 'Admin granskar' : 'Förare delar';
+            const panelVisible = state.session.role === 'admin';
+            els.auditInput.parentElement.parentElement.parentElement.classList.toggle('hidden', !panelVisible);
+            els.auditDriver.textContent = '—';
+            els.auditCount.textContent = '0';
+            els.auditTotal.textContent = formatMoney(0);
+            els.auditList.innerHTML = '';
+            if (!panelVisible || !state.importedAudit) {
+                els.auditEmpty.classList.remove('hidden');
+                return;
+            }
+            els.auditEmpty.classList.add('hidden');
+            els.auditDriver.textContent = state.importedAudit.meta.driverName || '—';
+            els.auditCount.textContent = String(state.importedAudit.rides.length);
+            els.auditTotal.textContent = formatMoney(state.importedAudit.rides.reduce((sum, item) => sum + Number(item.price || 0), 0));
+            state.importedAudit.rides.forEach((record) => {
+                const node = document.createElement('div');
+                node.className = 'user-card';
+                node.innerHTML = `
+                    <div class="user-head">
+                        <div>
+                            <div class="user-name">${record.driverName} · #${record.korningNumber}</div>
+                            <div class="user-meta">
+                                <span>${record.date}</span>
+                                <span>·</span>
+                                <span>${record.startTime}–${record.endTime}</span>
+                                <span>·</span>
+                                <span>${formatDuration(rideDuration(record))}</span>
+                            </div>
+                            <div class="user-meta">
+                                <span>Skapad ${formatDateTime(record.createdAt)}</span>
+                                <span>·</span>
+                                <span>Uppdaterad ${formatDateTime(record.updatedAt)}</span>
+                                <span>·</span>
+                                <span>${record.price === null ? 'Pris saknas' : formatMoney(record.price)}</span>
+                            </div>
+                        </div>
+                        <span class="badge ${record.price === null ? 'red' : 'blue'}">${record.price === null ? 'Pris saknas' : 'Kontrollerad lokalt'}</span>
+                    </div>
+                `;
+                els.auditList.appendChild(node);
+            });
+        }
+
+        function renderApp() {
+            els.loginView.classList.add('hidden');
+            els.appView.classList.remove('hidden');
+            els.userLine.textContent = `${state.session.displayName} · ${state.session.username}`;
+            els.roleBadge.textContent = state.session.role === 'admin' ? 'Admin' : 'Förare';
+            loadRides();
+            renderOverview();
+            renderRides();
+            renderAudit();
+            setView('overview');
+            startArbeteSync();
+        }
+
+        function clearRideForm() {
+            els.rideDate.value = todayString();
+            els.rideNumber.value = '';
+            els.rideStart.value = '';
+            els.rideEnd.value = '';
+            els.ridePrice.value = '';
+        }
+
+        function login() {
+            const username = els.loginUsername.value.trim().toLowerCase();
+            const password = els.loginPassword.value;
+            const user = state.users.find((item) => String(item.username || '').trim().toLowerCase() === username && item.password === password);
+            if (!user) {
+                els.loginError.textContent = 'Fel användarnamn eller lösenord.';
+                els.loginError.classList.remove('hidden');
+                return;
+            }
+            els.loginError.classList.add('hidden');
+            state.session = user;
+            state.importedAudit = null;
+            clearRideForm();
+            renderApp();
+        }
+
+        function logout() {
+            stopArbeteSync();
+            state.session = null;
+            state.importedAudit = null;
+            els.loginPassword.value = '';
+            els.appView.classList.add('hidden');
+            els.loginView.classList.remove('hidden');
+        }
+
+        function saveRide() {
+            const record = {
+                id: crypto.randomUUID(),
+                driverUsername: state.session.username,
+                driverName: state.session.displayName,
+                date: els.rideDate.value || todayString(),
+                korningNumber: els.rideNumber.value.trim(),
+                startTime: els.rideStart.value,
+                endTime: els.rideEnd.value,
+                price: els.ridePrice.value === '' ? null : Number(els.ridePrice.value),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            if (!record.korningNumber || !record.startTime || !record.endTime) {
+                fail('Fyll i körning nr, starttid och sluttid.');
+                return;
+            }
+            state.rides.unshift(record);
+            saveRides();
+            renderOverview();
+            renderRides();
+            clearRideForm();
+            flash('Körning sparad lokalt.');
+        }
+
+        function importAudit() {
+            try {
+                const payload = JSON.parse(els.auditInput.value || '{}');
+                if (!payload || !payload.meta || !Array.isArray(payload.rides)) {
+                    throw new Error('invalid');
+                }
+                state.importedAudit = payload;
+                renderAudit();
+                flash('Rapport importerad.');
+            } catch (error) {
+                fail('Det gick inte att läsa JSON-rapporten.');
+            }
+        }
+
+        async function initUsers() {
+            try {
+                const response = await fetch('./taxi-pilot-users.json', { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error('missing');
+                }
+                const payload = await response.json();
+                state.users = Array.isArray(payload.users) && payload.users.length ? payload.users : DEFAULT_USERS;
+            } catch (error) {
+                state.users = DEFAULT_USERS;
+            }
+            state.users = state.users.map((user) => ({
+                ...user,
+                role: String(user.role || 'driver').trim().toLowerCase()
+            }));
+            clearRideForm();
+        }
+
+        els.loginButton.addEventListener('click', login);
+        els.loginPassword.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                login();
+            }
+        });
+        els.logoutButton.addEventListener('click', logout);
+        els.tabs.forEach((tab) => tab.addEventListener('click', () => setView(tab.dataset.view)));
+        els.saveRideButton.addEventListener('click', saveRide);
+        els.shareReportButton.addEventListener('click', shareAudit);
+        els.copyJsonButton.addEventListener('click', copyAuditJson);
+        els.clearRideFormButton.addEventListener('click', clearRideForm);
+        els.importAuditButton.addEventListener('click', importAudit);
+        els.clearAuditButton.addEventListener('click', () => {
+            els.auditInput.value = '';
+            state.importedAudit = null;
+            renderAudit();
+        });
+        els.arbeteFrame.addEventListener('load', startArbeteSync);
+
+        initUsers();
+    </script>
+</body>
+</html>

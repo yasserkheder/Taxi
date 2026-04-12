@@ -1,0 +1,34 @@
+{
+  "users": [
+    {
+      "username": "Admin",
+      "password": "Admin0255",
+      "displayName": "Admin",
+      "role": "Admin"
+    },
+    {
+      "username": "Yasser",
+      "password": "Ya13907255",
+      "displayName": "Yasser Kheder",
+      "role": "Driver"
+    },
+    {
+      "username": "Shadi",
+      "password": "Shadi0201",
+      "displayName": "Shadi Kheder",
+      "role": "Driver"
+    },
+    {
+      "username": "Majd",
+      "password": "Majd1234",
+      "displayName": "Majd Shatoo",
+      "role": "Driver"
+    },
+    {
+      "username": "Mohamad",
+      "password": "Mohamad123456",
+      "displayName": "Mohamad Suliman",
+      "role": "Driver"
+    }
+  ]
+}
