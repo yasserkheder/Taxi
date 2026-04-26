@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="sv" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>FastPrisResa - Taxi Kalkylator</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+        }
+        body {
+            background: #eef2f5;
+            padding: 16px;
+            min-height: 100vh;
+        }
+        .app-container {
+            max-width: 550px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        .company-header {
+            background: #1e466e;
+            color: white;
+            padding: 18px 20px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+        }
+        .tabs {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            gap: 4px;
+            padding: 8px 8px 0 8px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5b6e;
+            cursor: pointer;
+            border-radius: 20px 20px 0 0;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #1e466e;
+            border-bottom: 3px solid #1e466e;
+        }
+        .tab-content {
+            display: none;
+            padding: 22px 18px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .input-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            font-size: 16px;
+            background: #ffffff;
+        }
+        .addr-wrap {
+            position: relative;
+        }
+        .addr-wrap input {
+            padding-right: 102px;
+        }
+        .addr-actions {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+        .addr-action-btn {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            border-radius: 14px;
+            font-size: 16px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .swap-btn {
+            width: 100%;
+            margin: -6px 0 18px 0;
+        }
+        .addr-suggest {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 8px);
+            background: #ffffff;
+            border: 1px solid #dce5f0;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.14);
+            overflow: hidden;
+            max-height: 240px;
+            overflow-y: auto;
+            display: none;
+            z-index: 50;
+        }
+        .addr-suggest.active {
+            display: block;
+        }
+        .addr-suggest-item {
+            padding: 12px 14px;
+            font-size: 14px;
+            color: #0f172a;
+            cursor: pointer;
+            text-align: left;
+            line-height: 1.35;
+            border-bottom: 1px solid #eef2f6;
+        }
+        .addr-suggest-item:last-child {
+            border-bottom: none;
+        }
+        .addr-suggest-item:hover {
+            background: #f8fafc;
+        }
+        .addr-suggest-hint {
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            background: #f8fafc;
+            border-bottom: 1px solid #eef2f6;
+            text-align: left;
+        }
+        button {
+            background: #1e466e;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button.secondary {
+            background: #e2e8f0;
+            color: #1e2a3a;
+        }
+        button.danger {
+            background: #b91c1c;
+        }
+        button.warning {
+            background: #d97706;
+        }
+        .row-buttons {
+            display: flex;
+            gap: 12px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .row-buttons button {
+            flex: 1;
+        }
+        .checkbox-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin: 16px 0;
+        }
+        .checkbox-vertical label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: normal;
+            margin-bottom: 0;
+            cursor: pointer;
+            font-size: 16px;
+            color: #1e293b;
+        }
+        .checkbox-vertical input {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+        }
+        .price-card {
+            background: #f1f5f9;
+            border-radius: 24px;
+            padding: 18px;
+            margin-top: 20px;
+        }
+        .price-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-areas:
+                "name price"
+                "btn btn";
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dce5f0;
+            gap: 10px 12px;
+        }
+        .price-row:last-child {
+            border-bottom: none;
+        }
+        .company-price {
+            grid-area: name;
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f3b5c;
+        }
+        .price-value {
+            grid-area: price;
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            text-align: right;
+            white-space: nowrap;
+        }
+        .select-btn {
+            grid-area: btn;
+            background: #2c7a4d;
+            padding: 12px 18px;
+            width: 100%;
+            border-radius: 40px;
+            font-size: 14px;
+        }
+        .settings-section {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #e2edf7;
+        }
+        .settings-section h3 {
+            color: #1e466e;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .message-modal, .customer-modal {
+            background: white;
+            width: 85%;
+            max-width: 380px;
+            border-radius: 28px;
+            text-align: center;
+            padding: 28px 24px;
+        }
+        .message-modal h3, .customer-modal h3 {
+            margin: 0 0 10px 0;
+            line-height: 1.25;
+        }
+        #messageText {
+            margin: 0;
+            padding: 8px 0 0 0;
+            line-height: 1.55;
+            white-space: pre-line;
+        }
+        #closeMessageBtn {
+            margin-top: 18px;
+        }
+        .map-modal {
+            background: white;
+            width: 92%;
+            max-width: 520px;
+            border-radius: 28px;
+            text-align: center;
+            padding: 18px 16px 16px 16px;
+        }
+        .map-modal h3 {
+            margin: 6px 0 12px 0;
+            line-height: 1.25;
+        }
+        #mapPickerMap {
+            height: 360px;
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        .map-modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .map-modal-actions .full {
+            grid-column: 1 / -1;
+        }
+        .customer-modal .price {
+            display: inline-flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 10px;
+            color: #1e3a5f;
+            margin: 20px 0;
+        }
+        .customer-modal .price-num {
+            font-size: 58px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .customer-modal .price-cur {
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1;
+            opacity: 0.85;
+        }
+        .modal-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .history-item {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 5px solid #1e466e;
+        }
+        footer {
+            font-size: 11px;
+            text-align: center;
+            padding: 14px;
+            color: #7e8b9e;
+            background: #f9fcff;
+            border-top: 1px solid #e2edf7;
+        }
+        .small-note {
+            font-size: 12px;
+            color: #5b6e8c;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="company-header" id="companyHeader">Mitt Taxi Företag</div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="tab-resor">Resräknare</button>
+        <button class="tab-btn" data-tab="tab-settings">Inställningar</button>
+        <button class="tab-btn" data-tab="tab-history">Historik</button>
+        <button class="tab-btn" data-tab="tab-suggest">Förslag</button>
+    </div>
+
+    <!-- RESERÄKNARE -->
+    <div id="tab-resor" class="tab-content active">
+        <div class="input-group">
+            <label>Från</label>
+            <div class="addr-wrap">
+                <input type="text" id="fromAddr" placeholder="Startadress" autocomplete="off">
+                <div class="addr-actions">
+                    <button type="button" class="addr-action-btn secondary" id="fromLocBtn">📍</button>
+                    <button type="button" class="addr-action-btn secondary" id="fromMapBtn">🗺️</button>
+                </div>
+                <div class="addr-suggest" id="fromSuggest"></div>
+            </div>
+        </div>
+        <button type="button" id="swapAddrBtn" class="secondary swap-btn">⇅ Byt Från / Till</button>
+        <div class="input-group">
+            <label>Till</label>
+            <div class="addr-wrap">
+                <input type="text" id="toAddr" placeholder="Destination" autocomplete="off">
+                <div class="addr-actions">
+                    <button type="button" class="addr-action-btn secondary" id="toLocBtn">📍</button>
+                    <button type="button" class="addr-action-btn secondary" id="toMapBtn">🗺️</button>
+                </div>
+                <div class="addr-suggest" id="toSuggest"></div>
+            </div>
+        </div>
+        <button id="fetchMapBtn" style="background:#3b7c5e;">🗺️ Hämta från karta</button>
+        <div class="small-note">Använder OpenStreetMap (gratis)</div>
+
+        <div class="input-group" style="margin-top: 18px;">
+            <label>Distans (km)</label>
+            <input type="number" id="distInput" step="0.1" value="0">
+        </div>
+        <div class="input-group">
+            <label>Tid (minuter)</label>
+            <input type="number" id="timeInput" step="1" value="0">
+        </div>
+
+        <div class="checkbox-vertical">
+            <label><input type="checkbox" id="stationChk"> 🚉 Stationstillägg</label>
+            <label><input type="checkbox" id="flygChk"> ✈️ Flygplatstillägg</label>
+            <label><input type="checkbox" id="nattChk"> 🌙 Nattresa</label>
+            <label><input type="checkbox" id="rabattChk"> 🔻 Rabatt</label>
+        </div>
+
+        <div class="input-group" id="rabattDiv" style="display:none;">
+            <label>Rabattvärde</label>
+            <input type="number" id="rabattValue" value="0" step="1">
+            <select id="rabattType" style="margin-top: 8px;">
+                <option value="percent">Procent (%)</option>
+                <option value="fixed">Fast belopp (SEK)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Tillägg (+ extra SEK)</label>
+            <input type="number" id="tillaggInput" value="0" step="1">
+        </div>
+
+        <div class="price-card">
+            <div class="price-row">
+                <span class="company-price" id="companyAName">Referensföretag A</span>
+                <span class="price-value" id="priceAVal">0 SEK</span>
+                <button class="select-btn" data-select="A">Välj</button>
+            </div>
+            <div class="price-row">
+                <span class="company-price" id="companyBName">Referensföretag B</span>
+                <span class="price-value" id="priceBVal">0 SEK</span>
+                <button class="select-btn" data-select="B">Välj</button>
+            </div>
+        </div>
+
+        <div class="row-buttons">
+            <button id="clearBtn" class="warning">🗑️ Rensa</button>
+            <button id="showCustomerBtn" style="background:#2c6e9e;">👁️ Visa för kund</button>
+        </div>
+    </div>
+
+    <!-- INSTÄLLNINGAR -->
+    <div id="tab-settings" class="tab-content">
+        <div class="input-group">
+            <label>Mitt företagsnamn</label>
+            <input type="text" id="myCompanyName" value="Mitt Taxi Företag">
+        </div>
+
+        <div class="settings-section">
+            <h3>Valuta</h3>
+            <div class="input-group">
+                <label>Valuta</label>
+                <select id="currencyCode">
+                    <option value="SEK">SEK</option>
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label id="currencyRateLabel">Kurs (1 SEK =)</label>
+                <input type="number" id="currencyRate" step="0.0001" value="1">
+                <div class="small-note" id="currencyRateHint">Ex: Om 1 SEK = 0.09 EUR, skriv 0.09</div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h3 id="sectionATitle">🚕 Referensföretag A</h3>
+            <div class="input-group"><label>Namn</label><input type="text" id="refAName" value="Referensföretag A"></div>
+            <div class="input-group"><label>Grundavgift (SEK)</label><input type="number" id="refAStart" step="0.5" value="0"></div>
+            <div class="input-group"><label>Pris per km (SEK)</label><input type="number" id="refAKm" step="0.1" value="0"></div>
+            <div class="input-group"><label>Pris per timme (kr/h)</label><input type="number" id="refATim" step="1" value="0"></div>
+            <div class="input-group"><label>Stationstillägg (SEK)</label><input type="number" id="refAStation" step="1" value="0"></div>
+            <div class="input-group"><label>Flygplatstillägg (SEK)</label><input type="number" id="refAFlyg" step="1" value="0"></div>
+            <div class="input-group"><label>Nattillägg (%)</label><input type="number" id="refANatt" step="1" value="0"></div>
+            <div class="input-group"><label>Korrigering (%)</label><input type="number" id="refACorr" step="1" value="100"></div>
+        </div>
+
+        <div class="settings-section">
+            <h3 id="sectionBTitle">🚕 Referensföretag B</h3>
+            <div class="input-group"><label>Namn</label><input type="text" id="refBName" value="Referensföretag B"></div>
+            <div class="input-group"><label>Grundavgift (SEK)</label><input type="number" id="refBStart" step="0.5" value="0"></div>
+            <div class="input-group"><label>Pris per km (SEK)</label><input type="number" id="refBKm" step="0.1" value="0"></div>
+            <div class="input-group"><label>Pris per timme (kr/h)</label><input type="number" id="refBTim" step="1" value="0"></div>
+            <div class="input-group"><label>Stationstillägg (SEK)</label><input type="number" id="refBStation" step="1" value="0"></div>
+            <div class="input-group"><label>Flygplatstillägg (SEK)</label><input type="number" id="refBFlyg" step="1" value="0"></div>
+            <div class="input-group"><label>Nattillägg (%)</label><input type="number" id="refBNatt" step="1" value="0"></div>
+            <div class="input-group"><label>Korrigering (%)</label><input type="number" id="refBCorr" step="1" value="100"></div>
+        </div>
+
+        <button id="saveSettingsBtn">💾 Spara alla inställningar</button>
+        <button id="resetSettingsBtn" class="secondary" style="margin-top: 10px;">↩️ Återställ standard</button>
+        <button id="exportSettingsBtn" class="secondary" style="margin-top: 10px;">📤 Exportera inställningar</button>
+        <div class="input-group" style="margin-top: 12px;"><label>Importera inställningsfil</label><input type="file" id="importSettingsFile" accept=".json"></div>
+    </div>
+
+    <!-- HISTORIK -->
+    <div id="tab-history" class="tab-content">
+        <button id="exportHistoryBtn" style="background:#2c7a4d;">📎 Exportera till Excel</button>
+        <button id="clearHistoryBtn" class="danger" style="margin-top: 10px;">🗑️ Rensa historik</button>
+        <div id="historyList" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- FÖRSLAG -->
+    <div id="tab-suggest" class="tab-content">
+        <div id="suggestArea" style="background:#eef2ff; border-radius: 24px; padding: 16px;">
+            <p>⚡ Baserat på dina senaste resor</p>
+            <div id="suggestText">Spara fler resor för förslag...</div>
+        </div>
+    </div>
+    <footer>FastPrisResa - Data sparas lokalt i din browser</footer>
+</div>
+
+<!-- Modal för meddelanden -->
+<div id="messageModal" class="modal-overlay">
+    <div class="message-modal">
+        <h3 id="messageTitle">Meddelande</h3>
+        <p id="messageText"></p>
+        <button id="closeMessageBtn">Stäng</button>
+    </div>
+</div>
+
+<!-- Modal för kundvy -->
+<div id="customerModal" class="modal-overlay">
+    <div class="customer-modal">
+        <div class="company-name" id="modalCompanyName">Mitt Taxi Företag</div>
+        <div class="price" id="modalPrice">
+            <span class="price-num" id="modalPriceNum">0.0</span>
+            <span class="price-cur" id="modalPriceCur">SEK</span>
+        </div>
+        <div class="thanks">Tack för din resa</div>
+        <button id="detailBtnInModal" class="secondary" style="margin: 10px auto;">Detaljer</button>
+        <div id="detailPopup" style="margin-top: 10px;"></div>
+        <div class="modal-buttons">
+            <button id="modalSaveBtn" style="background:#2c7a4d;">Godkänn & Spara</button>
+            <button id="modalCancelBtn" style="background:#9e2d2d;">Avbryt</button>
+        </div>
+    </div>
+</div>
+
+<div id="mapPickerModal" class="modal-overlay">
+    <div class="map-modal">
+        <h3>Välj adress på karta</h3>
+        <div id="mapPickerMap"></div>
+        <div class="map-modal-actions">
+            <button type="button" id="mapPickerMyLocBtn" class="secondary">📍 Min plats</button>
+            <button type="button" id="mapPickerUseBtn">Använd vald punkt</button>
+            <button type="button" id="mapPickerCancelBtn" class="secondary full">Stäng</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // القيم الافتراضية
+    const DEFAULT_SETTINGS = {
+        myCompany: "Familjen Kheder Taxi AB",
+        currency: { code: "SEK", sekPer: 1 },
+        refA: { name: "Taxi Kurir", start: 54, km: 19.7, tim: 590, station: 32, flyg: 46, natt: 15, corr: 100 },
+        refB: { name: "Taxi Göteborg", start: 61, km: 16.82, tim: 590, station: 29, flyg: 49, natt: 15, corr: 100 }
+    };
+
+    function mergeSettings(partial) {
+        const out = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+        const p = (partial && typeof partial === 'object') ? partial : {};
+        if (typeof p.myCompany === 'string') out.myCompany = p.myCompany;
+        if (p.currency && typeof p.currency === 'object') {
+            if (typeof p.currency.code === 'string') out.currency.code = p.currency.code;
+            const sekPer = parseFloat(p.currency.sekPer);
+            if (Number.isFinite(sekPer) && sekPer > 0) out.currency.sekPer = sekPer;
+            const legacyRate = parseFloat(p.currency.rate);
+            if (Number.isFinite(legacyRate) && legacyRate > 0) out.currency.sekPer = 1 / legacyRate;
+        }
+        const applyRef = (key) => {
+            const src = (p[key] && typeof p[key] === 'object') ? p[key] : {};
+            if (typeof src.name === 'string') out[key].name = src.name;
+            ['start', 'km', 'tim', 'station', 'flyg', 'natt', 'corr'].forEach(k => {
+                if (src[k] === undefined || src[k] === null || src[k] === '') return;
+                out[key][k] = parseFloat(src[k]) || 0;
+            });
+        };
+        applyRef('refA');
+        applyRef('refB');
+        return out;
+    }
+
+    let settings = mergeSettings();
+    
+    let currentSelectedPrice = 0;
+    let currentComputedPriceA = 0;
+    let currentComputedPriceB = 0;
+    let lastDistance = 0, lastTime = 0;
+    let lastExtras = { station: false, flyg: false, natt: false, rabatt: false, rabattType: "percent", rabattValue: 0, tillagg: 0 };
+    let history = [];
+    const GEOCODE_CACHE_KEY = "taxi_geocode_cache_v1";
+    const RECENT_ADDR_KEY = "taxi_recent_addresses_v1";
+    const geocodeCache = new Map();
+    let recentAddresses = [];
+
+    function normalizeAddrQuery(q = '') {
+        return q.toString().trim().replace(/\s+/g, ' ').toLowerCase();
+    }
+
+    function loadAddressHelpers() {
+        try {
+            const cached = localStorage.getItem(GEOCODE_CACHE_KEY);
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (parsed && typeof parsed === 'object') {
+                    Object.entries(parsed).forEach(([k, v]) => {
+                        if (v && typeof v === 'object' && Number.isFinite(v.lat) && Number.isFinite(v.lon)) {
+                            geocodeCache.set(k, v);
+                        }
+                    });
+                }
+            }
+        } catch {}
+        try {
+            const savedRecent = localStorage.getItem(RECENT_ADDR_KEY);
+            const parsed = savedRecent ? JSON.parse(savedRecent) : [];
+            recentAddresses = Array.isArray(parsed) ? parsed.map(x => (x || '').toString()).filter(Boolean) : [];
+        } catch {
+            recentAddresses = [];
+        }
+    }
+
+    function saveGeocodeCache() {
+        const obj = {};
+        Array.from(geocodeCache.entries()).slice(-120).forEach(([k, v]) => {
+            obj[k] = v;
+        });
+        try {
+            localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(obj));
+        } catch {}
+    }
+
+    function rememberAddress(addr = '') {
+        const val = addr.toString().trim();
+        if (!val) return;
+        recentAddresses = [val, ...recentAddresses.filter(x => x !== val)].slice(0, 40);
+        try {
+            localStorage.setItem(RECENT_ADDR_KEY, JSON.stringify(recentAddresses));
+        } catch {}
+    }
+
+    // تحميل البيانات
+    function loadData() {
+        loadAddressHelpers();
+        let saved = localStorage.getItem("taxi_settings");
+        if(saved) {
+            try { 
+                let s = JSON.parse(saved);
+                settings = mergeSettings(s);
+            } catch(e) {}
+        }
+        saved = localStorage.getItem("taxi_history");
+        if(saved) {
+            try { history = JSON.parse(saved); } catch(e) { history = []; }
+        }
+        updateUI();
+        renderHistory();
+        updateSuggestions();
+        clearTripFields();
+        initAddressAutocomplete();
+        initAddressActions();
+        initMapPicker();
+    }
+
+    function getCurrencyCode() {
+        const code = (settings?.currency?.code || 'SEK').toString().toUpperCase();
+        if (!['SEK', 'EUR', 'USD'].includes(code)) return 'SEK';
+        return code;
+    }
+
+    function getCurrencySekPerUnit() {
+        const code = getCurrencyCode();
+        if (code === 'SEK') return 1;
+        const sekPer = parseFloat(settings?.currency?.sekPer);
+        if (!Number.isFinite(sekPer) || sekPer <= 0) return 1;
+        return sekPer;
+    }
+
+    function toDisplayCurrencyAmount(sekAmount) {
+        const code = getCurrencyCode();
+        if (code === 'SEK') return sekAmount;
+        return sekAmount / getCurrencySekPerUnit();
+    }
+
+    function formatMoney(sekAmount, decimals = 0) {
+        const code = getCurrencyCode();
+        const value = toDisplayCurrencyAmount(sekAmount);
+        try {
+            return new Intl.NumberFormat('sv-SE', { style: 'currency', currency: code, minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
+        } catch {
+            const num = decimals === 1 ? value.toFixed(1) : Math.round(value).toString();
+            return `${num} ${code}`;
+        }
+    }
+
+    function getCurrencyDisplayLabel() {
+        const code = getCurrencyCode();
+        return code === 'SEK' ? 'kr' : code;
+    }
+
+    function formatNumberOnly(sekAmount, decimals = 1) {
+        const value = toDisplayCurrencyAmount(sekAmount);
+        try {
+            return new Intl.NumberFormat('sv-SE', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
+        } catch {
+            return decimals === 1 ? value.toFixed(1) : Math.round(value).toString();
+        }
+    }
+
+    function setCustomerPrice(sekAmount) {
+        const numEl = document.getElementById('modalPriceNum');
+        const curEl = document.getElementById('modalPriceCur');
+        if (numEl) numEl.textContent = formatNumberOnly(sekAmount, 1);
+        if (curEl) curEl.textContent = getCurrencyDisplayLabel();
+    }
+
+    function updateCurrencyUiHints() {
+        const code = getCurrencyCode();
+        const label = document.getElementById('currencyRateLabel');
+        const hint = document.getElementById('currencyRateHint');
+        if (label) {
+            label.textContent = code === 'SEK' ? 'Kurs (1 SEK =)' : `Kurs (1 ${code} = )`;
+        }
+        if (hint) {
+            hint.textContent = code === 'SEK'
+                ? 'Standard: SEK'
+                : `Ex: Om 1 ${code} = 10.50 SEK, skriv 10.50`;
+        }
+    }
+
+    function updateUI() {
+        document.getElementById("myCompanyName").value = settings.myCompany;
+        document.getElementById("companyHeader").innerText = settings.myCompany;
+        document.getElementById("modalCompanyName").innerText = settings.myCompany;
+
+        document.getElementById("currencyCode").value = getCurrencyCode();
+        document.getElementById("currencyRate").value = getCurrencySekPerUnit();
+        updateCurrencyUiHints();
+        
+        document.getElementById("refAName").value = settings.refA.name;
+        document.getElementById("refAStart").value = settings.refA.start;
+        document.getElementById("refAKm").value = settings.refA.km;
+        document.getElementById("refATim").value = settings.refA.tim;
+        document.getElementById("refAStation").value = settings.refA.station;
+        document.getElementById("refAFlyg").value = settings.refA.flyg;
+        document.getElementById("refANatt").value = settings.refA.natt;
+        document.getElementById("refACorr").value = settings.refA.corr || 100;
+        document.getElementById("companyAName").innerText = settings.refA.name;
+        document.getElementById("sectionATitle").innerHTML = `🚕 ${settings.refA.name}`;
+        
+        document.getElementById("refBName").value = settings.refB.name;
+        document.getElementById("refBStart").value = settings.refB.start;
+        document.getElementById("refBKm").value = settings.refB.km;
+        document.getElementById("refBTim").value = settings.refB.tim;
+        document.getElementById("refBStation").value = settings.refB.station;
+        document.getElementById("refBFlyg").value = settings.refB.flyg;
+        document.getElementById("refBNatt").value = settings.refB.natt;
+        document.getElementById("refBCorr").value = settings.refB.corr || 100;
+        document.getElementById("companyBName").innerText = settings.refB.name;
+        document.getElementById("sectionBTitle").innerHTML = `🚕 ${settings.refB.name}`;
+    }
+
+    function saveSettings() {
+        settings.myCompany = document.getElementById("myCompanyName").value;
+        settings.currency = {
+            code: document.getElementById("currencyCode").value,
+            sekPer: parseFloat(document.getElementById("currencyRate").value) || 1
+        };
+        settings.refA = {
+            name: document.getElementById("refAName").value,
+            start: parseFloat(document.getElementById("refAStart").value) || 0,
+            km: parseFloat(document.getElementById("refAKm").value) || 0,
+            tim: parseFloat(document.getElementById("refATim").value) || 0,
+            station: parseFloat(document.getElementById("refAStation").value) || 0,
+            flyg: parseFloat(document.getElementById("refAFlyg").value) || 0,
+            natt: parseFloat(document.getElementById("refANatt").value) || 0,
+            corr: parseFloat(document.getElementById("refACorr").value) || 100,
+        };
+        settings.refB = {
+            name: document.getElementById("refBName").value,
+            start: parseFloat(document.getElementById("refBStart").value) || 0,
+            km: parseFloat(document.getElementById("refBKm").value) || 0,
+            tim: parseFloat(document.getElementById("refBTim").value) || 0,
+            station: parseFloat(document.getElementById("refBStation").value) || 0,
+            flyg: parseFloat(document.getElementById("refBFlyg").value) || 0,
+            natt: parseFloat(document.getElementById("refBNatt").value) || 0,
+            corr: parseFloat(document.getElementById("refBCorr").value) || 100,
+        };
+        localStorage.setItem("taxi_settings", JSON.stringify(settings));
+        updateUI();
+        calculatePrices();
+        showMessage("Inställningar sparade", "Inställningarna har sparats!");
+    }
+
+    // معادلة حساب السعر حسب الترتيب المتفق عليه
+    function calculatePrice(company, dist, timeMin, station, flyg, natt, rabattActive, rabattVal, rabattIsPercent, tillagg) {
+        // 1. السعر الأساسي
+        let timeHours = timeMin / 60;
+        let base = company.start + (dist * company.km) + (timeHours * company.tim);
+        
+        // 2. إضافة Nattillägg (نسبة مئوية من السعر الأساسي)
+        let afterNatt = natt ? base + (base * company.natt / 100) : base;
+        
+        // 3. إضافة Stationstillägg (مبلغ ثابت)
+        let afterStation = station ? afterNatt + company.station : afterNatt;
+        
+        // 4. إضافة Flygplatstillägg (مبلغ ثابت)
+        let afterFlyg = flyg ? afterStation + company.flyg : afterStation;
+        
+        // 5. تطبيق Rabatt
+        let afterRabatt = afterFlyg;
+        if(rabattActive && rabattVal > 0) {
+            if(rabattIsPercent) {
+                afterRabatt = afterFlyg * (1 - rabattVal / 100);
+            } else {
+                afterRabatt = Math.max(0, afterFlyg - rabattVal);
+            }
+        }
+        
+        // 6. إضافة Tillägg
+        let total = afterRabatt + tillagg;
+
+        // 7. Korrigering (%)
+        const corr = parseFloat(company.corr) || 100;
+        total = total * (corr / 100);
+        
+        // 8. تقريب إلى أقرب عدد صحيح
+        return Math.round(total);
+    }
+
+    function calculatePrices() {
+        let dist = parseFloat(document.getElementById("distInput").value) || 0;
+        let time = parseFloat(document.getElementById("timeInput").value) || 0;
+        lastDistance = dist; lastTime = time;
+        let station = document.getElementById("stationChk").checked;
+        let flyg = document.getElementById("flygChk").checked;
+        let natt = document.getElementById("nattChk").checked;
+        let rabatt = document.getElementById("rabattChk").checked;
+        let rabattVal = parseFloat(document.getElementById("rabattValue").value) || 0;
+        let rabattType = document.getElementById("rabattType").value;
+        let tillagg = parseFloat(document.getElementById("tillaggInput").value) || 0;
+        lastExtras = { station, flyg, natt, rabatt, rabattType, rabattValue: rabattVal, tillagg };
+
+        currentComputedPriceA = calculatePrice(settings.refA, dist, time, station, flyg, natt, rabatt, rabattVal, rabattType === "percent", tillagg);
+        currentComputedPriceB = calculatePrice(settings.refB, dist, time, station, flyg, natt, rabatt, rabattVal, rabattType === "percent", tillagg);
+        document.getElementById("priceAVal").innerText = formatMoney(currentComputedPriceA, 1);
+        document.getElementById("priceBVal").innerText = formatMoney(currentComputedPriceB, 1);
+    }
+
+    function showMessage(title, text) {
+        document.getElementById("messageTitle").innerText = title;
+        document.getElementById("messageText").innerText = text;
+        document.getElementById("messageModal").classList.add("active");
+    }
+
+    function clearTripFields() {
+        const fromInput = document.getElementById("fromAddr");
+        const toInput = document.getElementById("toAddr");
+        fromInput.value = "";
+        toInput.value = "";
+        clearInputCoords(fromInput);
+        clearInputCoords(toInput);
+        document.getElementById("distInput").value = "0";
+        document.getElementById("timeInput").value = "0";
+        document.getElementById("stationChk").checked = false;
+        document.getElementById("flygChk").checked = false;
+        document.getElementById("nattChk").checked = false;
+        document.getElementById("rabattChk").checked = false;
+        document.getElementById("rabattValue").value = "0";
+        document.getElementById("tillaggInput").value = "0";
+        document.getElementById("rabattDiv").style.display = "none";
+        currentSelectedPrice = 0;
+        calculatePrices();
+    }
+
+    // OpenStreetMap OSRM
+    async function fetchMap() {
+        const fromInput = document.getElementById("fromAddr");
+        const toInput = document.getElementById("toAddr");
+        let from = fromInput.value.trim();
+        let to = toInput.value.trim();
+        if(!from || !to) { showMessage("Fel", "Ange både Från och Till adresser"); return; }
+        try {
+            let fromCoord = await geocode(from, fromInput);
+            let toCoord = await geocode(to, toInput);
+            if(!fromCoord || !toCoord) { showMessage("Fel", "Kunde inte hitta adresserna"); return; }
+            let url = `https://router.project-osrm.org/route/v1/driving/${fromCoord.lon},${fromCoord.lat};${toCoord.lon},${toCoord.lat}?overview=false`;
+            let resp = await fetch(url);
+            let data = await resp.json();
+            if(data.code !== "Ok") { showMessage("Fel", "Kunde inte beräkna avstånd"); return; }
+            let km = (data.routes[0].distance / 1000).toFixed(1);
+            let min = Math.round(data.routes[0].duration / 60);
+            document.getElementById("distInput").value = km;
+            document.getElementById("timeInput").value = min;
+            calculatePrices();
+            showMessage("Hämtat", `Distans: ${km} km, Tid: ${min} min`);
+            rememberAddress(from);
+            rememberAddress(to);
+        } catch(e) { showMessage("Fel", "Kontrollera internetanslutningen"); }
+    }
+
+    function parseLatLon(text = '') {
+        const raw = text.toString().trim();
+        const m = raw.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+        if (!m) return null;
+        const lat = parseFloat(m[1]);
+        const lon = parseFloat(m[2]);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+        if (lat < -90 || lat > 90 || lon < -180 || lon > 180) return null;
+        return { lat, lon };
+    }
+
+    function clearInputCoords(input) {
+        if (!input) return;
+        delete input.dataset.lat;
+        delete input.dataset.lon;
+        delete input.dataset.label;
+    }
+
+    function getInputCoords(input) {
+        if (!input) return null;
+        const lat = parseFloat(input.dataset.lat);
+        const lon = parseFloat(input.dataset.lon);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+        return { lat, lon };
+    }
+
+    async function fetchNominatimSuggestions(query) {
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=6&countrycodes=se`;
+        const resp = await fetch(url, { headers: { 'Accept-Language': 'sv' } });
+        const data = await resp.json();
+        if (!Array.isArray(data)) return [];
+        return data
+            .map(item => {
+                const lat = parseFloat(item?.lat);
+                const lon = parseFloat(item?.lon);
+                const label = (item?.display_name || '').toString().trim();
+                if (!label || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+                return { label, lat, lon };
+            })
+            .filter(Boolean);
+    }
+
+    async function geocode(addr, inputEl) {
+        const typedCoords = parseLatLon(addr);
+        if (typedCoords) return typedCoords;
+
+        const stored = getInputCoords(inputEl);
+        if (stored) return stored;
+
+        const key = normalizeAddrQuery(addr);
+        if (!key) return null;
+        if (geocodeCache.has(key)) return geocodeCache.get(key);
+
+        const results = await fetchNominatimSuggestions(addr);
+        if (!results.length) return null;
+        const best = results[0];
+        geocodeCache.set(key, { lat: best.lat, lon: best.lon, label: best.label });
+        saveGeocodeCache();
+        return { lat: best.lat, lon: best.lon };
+    }
+
+    function renderAddrSuggestions(container, items, hintText) {
+        if (!container) return;
+        if (!items.length) {
+            container.classList.remove('active');
+            container.innerHTML = '';
+            return;
+        }
+        container.classList.add('active');
+        container.innerHTML = `${hintText ? `<div class="addr-suggest-hint">${hintText}</div>` : ''}` + items
+            .map((item, idx) => `<div class="addr-suggest-item" data-idx="${idx}">${item.label}</div>`)
+            .join('');
+    }
+
+    function attachAutocomplete(inputId, suggestId) {
+        const input = document.getElementById(inputId);
+        const suggest = document.getElementById(suggestId);
+        if (!input || !suggest) return;
+
+        let debounceTimer = null;
+        let lastQuery = '';
+        let lastFetchAt = 0;
+        let latestItems = [];
+
+        const hide = () => {
+            suggest.classList.remove('active');
+            suggest.innerHTML = '';
+        };
+
+        const showLocal = (query) => {
+            const q = normalizeAddrQuery(query);
+            const local = (q ? recentAddresses.filter(a => normalizeAddrQuery(a).includes(q)) : recentAddresses.slice(0, 8))
+                .slice(0, 8)
+                .map(label => ({ label, lat: null, lon: null }));
+            latestItems = local;
+            renderAddrSuggestions(suggest, local, local.length ? 'Senaste adresser' : '');
+        };
+
+        const runRemote = async (query) => {
+            const q = query.toString().trim();
+            if (q.length < 3) return;
+            const now = Date.now();
+            if (now - lastFetchAt < 900) return;
+            lastFetchAt = now;
+            try {
+                const remote = await fetchNominatimSuggestions(q);
+                if (normalizeAddrQuery(input.value) !== normalizeAddrQuery(q)) return;
+                const merged = [];
+                const seen = new Set();
+                [...latestItems, ...remote].forEach(item => {
+                    const k = normalizeAddrQuery(item.label);
+                    if (!k || seen.has(k)) return;
+                    seen.add(k);
+                    merged.push(item);
+                });
+                latestItems = merged.slice(0, 10);
+                renderAddrSuggestions(suggest, latestItems, 'Förslag');
+            } catch {
+                showLocal(query);
+            }
+        };
+
+        input.addEventListener('input', () => {
+            clearInputCoords(input);
+            const query = input.value;
+            if (query === lastQuery) return;
+            lastQuery = query;
+            showLocal(query);
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => runRemote(query), 350);
+        });
+
+        input.addEventListener('focus', () => {
+            showLocal(input.value);
+        });
+
+        input.addEventListener('blur', () => {
+            setTimeout(() => hide(), 160);
+        });
+
+        suggest.addEventListener('mousedown', (e) => {
+            const el = e.target.closest('.addr-suggest-item');
+            if (!el) return;
+            const idx = parseInt(el.dataset.idx, 10);
+            const item = latestItems[idx];
+            if (!item) return;
+            input.value = item.label;
+            if (Number.isFinite(item.lat) && Number.isFinite(item.lon)) {
+                input.dataset.lat = item.lat;
+                input.dataset.lon = item.lon;
+                input.dataset.label = item.label;
+            }
+            rememberAddress(item.label);
+            hide();
+        });
+    }
+
+    function initAddressAutocomplete() {
+        attachAutocomplete('fromAddr', 'fromSuggest');
+        attachAutocomplete('toAddr', 'toSuggest');
+    }
+
+    function getCurrentPositionAsync(options = {}) {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject(new Error('geolocation_not_supported'));
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => resolve(pos),
+                (err) => reject(err),
+                { enableHighAccuracy: true, timeout: 12000, maximumAge: 15000, ...options }
+            );
+        });
+    }
+
+    async function reverseGeocode(lat, lon) {
+        const url = `https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&format=json&zoom=18&addressdetails=1`;
+        const resp = await fetch(url, { headers: { 'Accept-Language': 'sv' } });
+        const data = await resp.json();
+        const label = (data?.display_name || '').toString().trim();
+        return label || null;
+    }
+
+    async function setInputFromCoords(input, lat, lon) {
+        if (!input) return;
+        input.dataset.lat = lat;
+        input.dataset.lon = lon;
+        let label = null;
+        try {
+            label = await reverseGeocode(lat, lon);
+        } catch {}
+        const val = label || `${lat}, ${lon}`;
+        input.value = val;
+        input.dataset.label = val;
+        rememberAddress(val);
+    }
+
+    async function useMyLocationForInput(inputId) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        try {
+            const pos = await getCurrentPositionAsync();
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            await setInputFromCoords(input, lat, lon);
+        } catch {
+            showMessage("Fel", "Kunde inte hämta din plats. Kontrollera behörighet och internet.");
+        }
+    }
+
+    function swapAddresses() {
+        const fromInput = document.getElementById('fromAddr');
+        const toInput = document.getElementById('toAddr');
+        if (!fromInput || !toInput) return;
+
+        const fromVal = fromInput.value;
+        const toVal = toInput.value;
+        fromInput.value = toVal;
+        toInput.value = fromVal;
+
+        const fromLat = fromInput.dataset.lat;
+        const fromLon = fromInput.dataset.lon;
+        const fromLabel = fromInput.dataset.label;
+
+        const toLat = toInput.dataset.lat;
+        const toLon = toInput.dataset.lon;
+        const toLabel = toInput.dataset.label;
+
+        if (toLat !== undefined) fromInput.dataset.lat = toLat; else delete fromInput.dataset.lat;
+        if (toLon !== undefined) fromInput.dataset.lon = toLon; else delete fromInput.dataset.lon;
+        if (toLabel !== undefined) fromInput.dataset.label = toLabel; else delete fromInput.dataset.label;
+
+        if (fromLat !== undefined) toInput.dataset.lat = fromLat; else delete toInput.dataset.lat;
+        if (fromLon !== undefined) toInput.dataset.lon = fromLon; else delete toInput.dataset.lon;
+        if (fromLabel !== undefined) toInput.dataset.label = fromLabel; else delete toInput.dataset.label;
+    }
+
+    function initAddressActions() {
+        const fromLoc = document.getElementById('fromLocBtn');
+        const fromMap = document.getElementById('fromMapBtn');
+        const toLoc = document.getElementById('toLocBtn');
+        const toMap = document.getElementById('toMapBtn');
+        const swapBtn = document.getElementById('swapAddrBtn');
+
+        if (fromLoc) fromLoc.addEventListener('click', () => useMyLocationForInput('fromAddr'));
+        if (toLoc) toLoc.addEventListener('click', () => useMyLocationForInput('toAddr'));
+        if (fromMap) fromMap.addEventListener('click', () => openMapPicker('fromAddr'));
+        if (toMap) toMap.addEventListener('click', () => openMapPicker('toAddr'));
+        if (swapBtn) swapBtn.addEventListener('click', () => swapAddresses());
+    }
+
+    const mapPickerState = {
+        targetInputId: null,
+        map: null,
+        marker: null,
+        selected: null
+    };
+
+    function closeMapPicker() {
+        const modal = document.getElementById('mapPickerModal');
+        if (modal) modal.classList.remove('active');
+        mapPickerState.targetInputId = null;
+        mapPickerState.selected = null;
+    }
+
+    async function confirmMapPickerSelection() {
+        if (!mapPickerState.targetInputId || !mapPickerState.selected) {
+            showMessage("Info", "Välj en punkt på kartan först.");
+            return;
+        }
+        const input = document.getElementById(mapPickerState.targetInputId);
+        if (!input) return;
+        await setInputFromCoords(input, mapPickerState.selected.lat, mapPickerState.selected.lon);
+        closeMapPicker();
+    }
+
+    async function centerMapOnMyLocation(placeMarker = true) {
+        if (!mapPickerState.map) return;
+        try {
+            const pos = await getCurrentPositionAsync();
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            mapPickerState.map.setView([lat, lon], 16);
+            if (placeMarker) {
+                mapPickerState.selected = { lat, lon };
+                if (!mapPickerState.marker) {
+                    mapPickerState.marker = window.L.marker([lat, lon]).addTo(mapPickerState.map);
+                } else {
+                    mapPickerState.marker.setLatLng([lat, lon]);
+                }
+            }
+        } catch {
+            showMessage("Fel", "Kunde inte hämta din plats. Kontrollera behörighet.");
+        }
+    }
+
+    function openMapPicker(targetInputId) {
+        const modal = document.getElementById('mapPickerModal');
+        if (!modal) return;
+        if (!window.L) {
+            showMessage("Fel", "Kartfunktionen kräver internet (Leaflet).");
+            return;
+        }
+        mapPickerState.targetInputId = targetInputId;
+        modal.classList.add('active');
+
+        if (!mapPickerState.map) {
+            mapPickerState.map = window.L.map('mapPickerMap', { zoomControl: true });
+            window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(mapPickerState.map);
+
+            mapPickerState.map.on('click', (e) => {
+                const lat = e.latlng.lat;
+                const lon = e.latlng.lng;
+                mapPickerState.selected = { lat, lon };
+                if (!mapPickerState.marker) {
+                    mapPickerState.marker = window.L.marker([lat, lon]).addTo(mapPickerState.map);
+                } else {
+                    mapPickerState.marker.setLatLng([lat, lon]);
+                }
+            });
+        }
+
+        const input = document.getElementById(targetInputId);
+        const stored = getInputCoords(input);
+        if (stored) {
+            mapPickerState.selected = { lat: stored.lat, lon: stored.lon };
+            mapPickerState.map.setView([stored.lat, stored.lon], 16);
+            if (!mapPickerState.marker) {
+                mapPickerState.marker = window.L.marker([stored.lat, stored.lon]).addTo(mapPickerState.map);
+            } else {
+                mapPickerState.marker.setLatLng([stored.lat, stored.lon]);
+            }
+        } else {
+            mapPickerState.map.setView([57.7089, 11.9746], 12);
+        }
+
+        setTimeout(() => {
+            try { mapPickerState.map.invalidateSize(); } catch {}
+        }, 180);
+    }
+
+    function initMapPicker() {
+        const cancel = document.getElementById('mapPickerCancelBtn');
+        const useBtn = document.getElementById('mapPickerUseBtn');
+        const myLoc = document.getElementById('mapPickerMyLocBtn');
+        if (cancel) cancel.addEventListener('click', () => closeMapPicker());
+        if (useBtn) useBtn.addEventListener('click', () => confirmMapPickerSelection());
+        if (myLoc) myLoc.addEventListener('click', () => centerMapOnMyLocation(true));
+        const overlay = document.getElementById('mapPickerModal');
+        if (overlay) {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) closeMapPicker();
+            });
+        }
+    }
+
+    function renderHistory() {
+        let container = document.getElementById("historyList");
+        if(!container) return;
+        if(history.length === 0) { container.innerHTML = "<p>Inga resor sparade</p>"; return; }
+        let html = "";
+        for(let h of history) {
+            html += `<div class="history-item">
+                        <strong>${h.timestamp}</strong><br>
+                        📍 ${h.distance} km / ${h.time} min<br>
+                        💰 ${formatMoney(h.finalPrice)}
+                        ${h.station ? "🚉" : ""} ${h.flyg ? "✈️" : ""} ${h.natt ? "🌙" : ""}
+                        ${h.rabatt ? "🔻" : ""} tillägg:${formatMoney(h.tillagg || 0)}
+                    </div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    function exportHistoryExcel() {
+        if(history.length === 0) { showMessage("Info", "Ingen historik att exportera"); return; }
+        const code = getCurrencyCode();
+        let csv = `Tid,Distans km,Tid min,Pris ${code},Station,Flygplats,Natt,Rabatt,Tillägg ${code}\n`;
+        for(let h of history) {
+            const price = Math.round(toDisplayCurrencyAmount(h.finalPrice));
+            const tillagg = Math.round(toDisplayCurrencyAmount(h.tillagg || 0));
+            csv += `"${h.timestamp}",${h.distance},${h.time},${price},${h.station ? "Ja" : "Nej"},${h.flyg ? "Ja" : "Nej"},${h.natt ? "Ja" : "Nej"},${h.rabatt ? "Ja" : "Nej"},${tillagg}\n`;
+        }
+        let blob = new Blob([csv], {type: "text/csv"});
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "taxi_history.csv";
+        a.click();
+        showMessage("Exporterad", "Historik exporterad till CSV");
+    }
+
+    function clearHistory() {
+        if(confirm("Radera all historik?")) {
+            history = [];
+            localStorage.setItem("taxi_history", JSON.stringify(history));
+            renderHistory();
+            updateSuggestions();
+            showMessage("Rensad", "Historiken har rensats");
+        }
+    }
+
+    function updateSuggestions() {
+        let div = document.getElementById("suggestText");
+        if(history.length < 2) { div.innerHTML = "Spara fler resor för förslag baserade på genomsnitt."; return; }
+        let totalPrice = 0, totalDist = 0;
+        for(let h of history) { totalPrice += h.finalPrice; totalDist += h.distance; }
+        const avg = (toDisplayCurrencyAmount(totalPrice) / totalDist).toFixed(1);
+        div.innerHTML = `<p>📊 Genomsnittligt pris per km: ${avg} ${getCurrencyCode()}/km</p>
+                         <p>⚡ Senaste resa: ${formatMoney(history[0].finalPrice)} för ${history[0].distance} km</p>`;
+    }
+
+    // Event listeners
+    document.getElementById("fetchMapBtn").addEventListener("click", fetchMap);
+    document.getElementById("saveSettingsBtn").addEventListener("click", saveSettings);
+    document.getElementById("resetSettingsBtn").addEventListener("click", () => {
+        settings = mergeSettings();
+        localStorage.removeItem("taxi_settings");
+        updateUI();
+        calculatePrices();
+        showMessage("Återställd", "Standardinställningar återställda");
+    });
+    document.getElementById("clearBtn").addEventListener("click", () => {
+        if(confirm("Är du säker att du vill rensa alla fält?")) {
+            clearTripFields();
+            showMessage("Rensat", "Alla fält har rensats");
+        }
+    });
+    document.getElementById("showCustomerBtn").addEventListener("click", () => {
+        if(currentSelectedPrice <= 0) { showMessage("Info", "Vänligen tryck Välj på ett pris först"); return; }
+        document.getElementById("modalCompanyName").innerText = settings.myCompany;
+        setCustomerPrice(currentSelectedPrice);
+        document.getElementById("detailPopup").innerHTML = "";
+        document.getElementById("customerModal").classList.add("active");
+    });
+    document.getElementById("modalSaveBtn").addEventListener("click", () => {
+        let record = {
+            timestamp: new Date().toLocaleString(),
+            distance: lastDistance,
+            time: lastTime,
+            finalPrice: currentSelectedPrice,
+            station: lastExtras.station,
+            flyg: lastExtras.flyg,
+            natt: lastExtras.natt,
+            rabatt: lastExtras.rabatt,
+            tillagg: lastExtras.tillagg
+        };
+        history.unshift(record);
+        localStorage.setItem("taxi_history", JSON.stringify(history));
+        renderHistory();
+        updateSuggestions();
+        document.getElementById("customerModal").classList.remove("active");
+        showMessage("Resa sparad", "Rutten har sparats i historiken");
+    });
+    document.getElementById("modalCancelBtn").addEventListener("click", () => document.getElementById("customerModal").classList.remove("active"));
+    document.getElementById("detailBtnInModal").addEventListener("click", () => {
+        document.getElementById("detailPopup").innerHTML = `<div style="background:#f1f5f9;padding:8px;border-radius:20px;">📏 ${lastDistance} km · ⏱️ ${lastTime} min</div>`;
+    });
+    document.getElementById("closeMessageBtn").addEventListener("click", () => document.getElementById("messageModal").classList.remove("active"));
+    document.getElementById("rabattChk").addEventListener("change", (e) => {
+        document.getElementById("rabattDiv").style.display = e.target.checked ? "block" : "none";
+        calculatePrices();
+    });
+    document.getElementById("exportHistoryBtn").addEventListener("click", exportHistoryExcel);
+    document.getElementById("clearHistoryBtn").addEventListener("click", clearHistory);
+    document.getElementById("exportSettingsBtn").addEventListener("click", () => {
+        let blob = new Blob([JSON.stringify(settings)], {type: "application/json"});
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "taxi_settings.json";
+        a.click();
+        showMessage("Exporterad", "Inställningar exporterade");
+    });
+    document.getElementById("importSettingsFile").addEventListener("change", (e) => {
+        let file = e.target.files[0];
+        if(!file) return;
+        let reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                let imported = JSON.parse(ev.target.result);
+                settings = mergeSettings(imported);
+                localStorage.setItem("taxi_settings", JSON.stringify(settings));
+                updateUI();
+                showMessage("Importerad", "Inställningar importerade");
+            } catch(e) { showMessage("Fel", "Ogiltig fil"); }
+        };
+        reader.readAsText(file);
+    });
+
+    document.querySelectorAll(".select-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            let key = e.target.getAttribute("data-select");
+            currentSelectedPrice = key === "A" ? currentComputedPriceA : currentComputedPriceB;
+            showMessage("Pris valt", `${formatMoney(currentSelectedPrice, 1)}`);
+        });
+    });
+
+    document.querySelectorAll("#distInput, #timeInput, #stationChk, #flygChk, #nattChk, #rabattValue, #rabattType, #tillaggInput").forEach(el => {
+        el.addEventListener("input", calculatePrices);
+        el.addEventListener("change", calculatePrices);
+    });
+
+    document.getElementById("currencyCode").addEventListener("change", () => {
+        settings.currency = settings.currency || { code: "SEK", sekPer: 1 };
+        settings.currency.code = document.getElementById("currencyCode").value;
+        updateCurrencyUiHints();
+        calculatePrices();
+        renderHistory();
+        updateSuggestions();
+    });
+    document.getElementById("currencyRate").addEventListener("input", () => {
+        settings.currency = settings.currency || { code: "SEK", sekPer: 1 };
+        settings.currency.sekPer = parseFloat(document.getElementById("currencyRate").value) || 1;
+        calculatePrices();
+        renderHistory();
+        updateSuggestions();
+    });
+
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+            btn.classList.add("active");
+            document.getElementById(btn.getAttribute("data-tab")).classList.add("active");
+        });
+    });
+
+    loadData();
+    calculatePrices();
+</script>
+</body>
+</html>
